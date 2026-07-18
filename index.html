@@ -183,7 +183,7 @@
   }
   .logo .mark svg { width: 18px; height: 18px; }
   .logo-img { height: 42px; width: auto; display: block; }
-  .header-cta { padding: 12px 24px; min-height: 48px; }
+  .header-cta { padding: 12px 24px; min-height: 48px; gap: 0; }
 
   /* =========================================================
      S1 HERO
@@ -546,6 +546,11 @@
     section { padding: 88px 0; }
     .hero h1 { font-size: 44px; }
     .hero-stage { max-width: 660px; }
+
+    /* Grid-Kinder dürfen die Spalte nicht aufblähen (sonst Overflow) */
+    .final-grid > *, .about-grid > * { min-width: 0; }
+    .final-form-card, .final-benefits { max-width: 100%; }
+    .field input, .field select { min-width: 0; max-width: 100%; }
     .about-grid, .final-grid { grid-template-columns: 1fr; gap: 40px; }
     .steps { grid-template-columns: repeat(2, 1fr); gap: var(--s-6); }
     .steps::before { display: none; }
@@ -589,6 +594,50 @@
     .hero-actions { margin-top: 32px; }
     .footer-grid { grid-template-columns: 1fr; gap: 32px; }
 
+    /* Header: „Kostenloses" ausblenden, damit Logo + Button nebeneinander passen */
+    .hide-mobile { display: none; }
+    .logo-img { height: 30px; }
+
+    /* Buttons dürfen umbrechen statt überzulaufen (kleine Handys, 360 px) */
+    .btn { white-space: normal; }
+    .hero-actions .btn { font-size: 16px; padding: 18px 24px; }
+    /* In den schmaleren Karten kleiner, damit der CTA einzeilig bleibt */
+    .btn-full { font-size: 15px; padding: 18px 14px; }
+
+    /* Trust-Bar: sauber untereinander statt chaotischem Umbruch */
+    .trust-bar .container { flex-direction: column; gap: 12px; }
+    .trust-sep { display: none; }
+    /* display:block statt flex – sonst zerfällt der Satz in umbrechende Einzelteile */
+    .trust-item { display: block; text-align: center; font-size: 15px; }
+    .trust-item strong { font-size: 17px; }
+
+    /* Vergleichstabelle: als Karten stapeln – sonst ist die Flowstate-Spalte
+       auf dem Handy unsichtbar (nur per Seitwärts-Wischen erreichbar) */
+    .table-wrap { overflow-x: visible; }
+    table.compare-table { min-width: 0; width: 100%; }
+    table.compare-table thead { display: none; }
+    table.compare-table tbody, table.compare-table tr, table.compare-table td { display: block; width: 100%; }
+    table.compare-table tr {
+      border: 1px solid var(--border); border-radius: var(--r-lg);
+      padding: 16px 18px; margin-bottom: 12px; background: #fff;
+    }
+    table.compare-table td { border: none; padding: 0; font-size: 15px; }
+    table.compare-table td:first-child {
+      font-weight: 700; font-size: 16px; color: var(--luna-900);
+      margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+    table.compare-table td[data-l]::before {
+      content: attr(data-l); display: block;
+      font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 3px;
+    }
+    table.compare-table td[data-l] { margin-bottom: 10px; }
+    table.compare-table td.flow {
+      background: var(--bg-tint); border-radius: var(--r-md);
+      padding: 10px 12px; margin-bottom: 0;
+    }
+    table.compare-table td.flow::before { color: var(--luna-500); }
+
     .mobile-cta { display: block; }
   }
 
@@ -605,7 +654,7 @@
     <a href="#top" class="logo" aria-label="Flowstate AI Solutions – Startseite">
       <img src="Bilder/logo-header.png" alt="Flowstate AI Solutions" class="logo-img" width="225" height="42" />
     </a>
-    <a href="#erstgespraech" class="btn btn-primary header-cta" data-cta="header">Kostenloses Erstgespräch</a>
+    <a href="#erstgespraech" class="btn btn-primary header-cta" data-cta="header"><span class="hide-mobile">Kostenloses&nbsp;</span>Erstgespräch</a>
   </div>
 </header>
 
@@ -736,13 +785,13 @@
           <tr><th></th><th>Klassische Agentur</th><th class="flow">Flowstate</th></tr>
         </thead>
         <tbody>
-          <tr><td>Kosten für die Entstehung</td><td>3.000 – 12.000 € Vorkasse</td><td class="flow">1 €</td></tr>
-          <tr><td>Laufende Kosten</td><td>50 – 200 €/Monat Wartung (oft extra)</td><td class="flow">100 €/Monat – alles inklusive</td></tr>
-          <tr><td>Änderungen</td><td>Werden nach Stundensatz berechnet</td><td class="flow">Inklusive</td></tr>
-          <tr><td>Hosting</td><td>Separater Vertrag</td><td class="flow">Inklusive</td></tr>
-          <tr><td>Nach 4–5 Jahren</td><td>Redesign nötig – wieder Vorkasse</td><td class="flow">Läuft einfach weiter. Wir frischen auf.</td></tr>
-          <tr><td>Vertragsbindung</td><td>Oft 12–24 Monate</td><td class="flow">Monatlich kündbar</td></tr>
-          <tr><td>Interesse der Agentur</td><td>Projekt abschließen</td><td class="flow">Dass Ihre Website dauerhaft funktioniert</td></tr>
+          <tr><td>Kosten für die Entstehung</td><td data-l="Klassische Agentur">3.000 – 12.000 € Vorkasse</td><td class="flow" data-l="Flowstate">1 €</td></tr>
+          <tr><td>Laufende Kosten</td><td data-l="Klassische Agentur">50 – 200 €/Monat Wartung (oft extra)</td><td class="flow" data-l="Flowstate">100 €/Monat – alles inklusive</td></tr>
+          <tr><td>Änderungen</td><td data-l="Klassische Agentur">Werden nach Stundensatz berechnet</td><td class="flow" data-l="Flowstate">Inklusive</td></tr>
+          <tr><td>Hosting</td><td data-l="Klassische Agentur">Separater Vertrag</td><td class="flow" data-l="Flowstate">Inklusive</td></tr>
+          <tr><td>Nach 4–5 Jahren</td><td data-l="Klassische Agentur">Redesign nötig – wieder Vorkasse</td><td class="flow" data-l="Flowstate">Läuft einfach weiter. Wir frischen auf.</td></tr>
+          <tr><td>Vertragsbindung</td><td data-l="Klassische Agentur">Oft 12–24 Monate</td><td class="flow" data-l="Flowstate">Monatlich kündbar</td></tr>
+          <tr><td>Interesse der Agentur</td><td data-l="Klassische Agentur">Projekt abschließen</td><td class="flow" data-l="Flowstate">Dass Ihre Website dauerhaft funktioniert</td></tr>
         </tbody>
       </table>
     </div>
