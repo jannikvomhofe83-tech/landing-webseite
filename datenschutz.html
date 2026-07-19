@@ -5,53 +5,206 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Datenschutzerklärung | Flowstate AI Solutions</title>
 <meta name="robots" content="noindex, follow" />
+<link rel="icon" type="image/png" href="Bilder/favicon.png" />
 <style>
-  :root{ --luna-500:#26658C; --luna-700:#023859; --luna-900:#011C40; --border:#D8E9F0; --muted:#5A7A8C; --font:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+  :root{ --luna-500:#26658C; --luna-700:#023859; --luna-900:#011C40; --border:#D8E9F0; --muted:#5A7A8C; --tint:#EDF7FA; --font:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
   *{box-sizing:border-box;margin:0;padding:0}
+  html{overflow-x:hidden}
   body{font-family:var(--font);color:var(--luna-900);line-height:1.7;background:#fff;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:760px;margin:0 auto;padding:64px 24px 96px}
+  .wrap{max-width:760px;margin:0 auto;padding:56px 20px 96px}
   a{color:var(--luna-500)}
-  .back{display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:600;margin-bottom:40px}
-  h1{font-size:36px;letter-spacing:-0.02em;margin-bottom:16px}
-  h2{font-size:20px;letter-spacing:-0.01em;margin:32px 0 12px;color:var(--luna-700)}
+  .back{display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:600;margin-bottom:40px;text-decoration:none}
+  .back:hover{text-decoration:underline}
+  h1{font-size:34px;letter-spacing:-0.02em;margin-bottom:10px;line-height:1.2}
+  .stand{color:var(--muted);font-size:15px;margin-bottom:28px}
+  h2{font-size:19px;letter-spacing:-0.01em;margin:32px 0 10px;color:var(--luna-700)}
+  h3{font-size:16px;margin:20px 0 8px;color:var(--luna-900)}
   p{margin-bottom:12px}
-  .ph{color:var(--muted);font-style:italic}
-  .note{background:#EDF7FA;border:1px solid var(--border);border-radius:12px;padding:20px 24px;font-size:14px;color:var(--muted);margin-top:48px}
+  ul{margin:10px 0 14px 20px}
+  li{margin-bottom:6px}
+  .box{background:var(--tint);border:1px solid var(--border);border-radius:12px;padding:18px 22px;font-size:15px;margin:18px 0}
+  button.revoke{font-family:inherit;font-size:15px;font-weight:600;color:#fff;background:var(--luna-700);border:none;border-radius:8px;padding:12px 20px;cursor:pointer;margin-top:6px}
+  button.revoke:hover{background:var(--luna-900)}
+  @media (max-width:640px){ h1{font-size:27px} .wrap{padding:40px 20px 72px} }
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="/">← Zurück zur Startseite</a>
   <h1>Datenschutzerklärung</h1>
-  <p class="ph">Stand: [PLATZHALTER Datum]. Dieses Muster ist ein Gerüst und ersetzt keine Rechtsberatung.</p>
+  <p class="stand">Stand: Juli 2026</p>
 
   <h2>1. Verantwortlicher</h2>
-  <p class="ph">[PLATZHALTER: Sehorz Lukas, vom Hofe Jannik GbR – Flowstate AI Solutions, Anschrift, E-Mail]</p>
+  <p>
+    Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br><br>
+    Sehorz Lukas, vom Hofe Jannik GbR – Flowstate AI Solutions<br>
+    Orlfing 1, 84405 Dorfen<br>
+    Telefon: <a href="tel:+491723465896">0172 3465896</a><br>
+    E-Mail: <a href="mailto:lukas.sehorz@flowstate-ai.net">lukas.sehorz@flowstate-ai.net</a>
+  </p>
+  <p>
+    Einen Datenschutzbeauftragten haben wir nicht bestellt, da die gesetzlichen Voraussetzungen
+    hierfür (§ 38 BDSG) nicht vorliegen.
+  </p>
 
-  <h2>2. Erhebung und Verarbeitung personenbezogener Daten</h2>
-  <p>Wenn Sie unser Kontaktformular für ein kostenloses Erstgespräch nutzen, verarbeiten wir die von Ihnen angegebenen Daten (Name, E-Mail-Adresse und optional Telefonnummer, Unternehmen sowie Angaben zu einer bestehenden Website), um Ihre Anfrage zu bearbeiten und mit Ihnen Kontakt aufzunehmen.</p>
-  <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Durchführung vorvertraglicher Maßnahmen) bzw. Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).</p>
+  <h2>2. Hosting</h2>
+  <p>
+    Diese Website wird bei <strong>Netlify, Inc.</strong>, 101 2nd Street, San Francisco, CA 94105, USA
+    gehostet. Beim Aufruf der Website werden durch den Hoster automatisch sogenannte Server-Logfiles
+    verarbeitet, die Ihr Browser übermittelt:
+  </p>
+  <ul>
+    <li>IP-Adresse des zugreifenden Geräts</li>
+    <li>Datum und Uhrzeit des Zugriffs</li>
+    <li>aufgerufene Seite bzw. Datei</li>
+    <li>übertragene Datenmenge und Meldung über den Abruferfolg</li>
+    <li>Browsertyp, Browserversion und Betriebssystem</li>
+    <li>Referrer-URL (die zuvor besuchte Seite)</li>
+  </ul>
+  <p>
+    Diese Verarbeitung ist technisch erforderlich, um die Website auszuliefern, ihre Stabilität und
+    Sicherheit zu gewährleisten und Angriffe abzuwehren. Rechtsgrundlage ist
+    <strong>Art. 6 Abs. 1 lit. f DSGVO</strong> (berechtigtes Interesse am sicheren und effizienten
+    Betrieb der Website).
+  </p>
+  <p>
+    Mit Netlify besteht ein Vertrag zur Auftragsverarbeitung (Data Processing Agreement) nach
+    Art. 28 DSGVO. Da Netlify seinen Sitz in den USA hat, findet eine Datenübermittlung in ein Drittland
+    statt. Netlify, Inc. ist nach dem <strong>EU-U.S. Data Privacy Framework</strong> zertifiziert. Die
+    Übermittlung stützt sich damit auf den Angemessenheitsbeschluss der Europäischen Kommission vom
+    10. Juli 2023 (Art. 45 DSGVO).
+  </p>
 
-  <h2>3. Hosting</h2>
-  <p class="ph">[PLATZHALTER: Name und Anschrift des Hosting-Anbieters, Ort der Server (Deutschland), Auftragsverarbeitungsvertrag].</p>
+  <h2>3. Kontaktformular</h2>
+  <p>
+    Auf dieser Website bieten wir Ihnen ein Formular an, über das Sie ein kostenloses Erstgespräch
+    anfragen können. Dabei verarbeiten wir folgende Angaben:
+  </p>
+  <ul>
+    <li><strong>Name</strong> (Pflichtangabe) – zur persönlichen Ansprache</li>
+    <li><strong>E-Mail-Adresse</strong> (Pflichtangabe) – zur Kontaktaufnahme</li>
+    <li><strong>Telefonnummer</strong> (Pflichtangabe) – für den vereinbarten Rückruf</li>
+    <li><strong>Unternehmen</strong> (freiwillig) – zur Einordnung Ihrer Anfrage</li>
+    <li><strong>Angabe, ob eine Website vorhanden ist, sowie ggf. deren Adresse</strong> (freiwillig) –
+        damit wir Ihre bestehende Seite vor dem Gespräch ansehen können</li>
+  </ul>
+  <p>
+    Die Verarbeitung erfolgt ausschließlich zur Bearbeitung Ihrer Anfrage und der damit
+    zusammenhängenden Kontaktaufnahme. Rechtsgrundlage ist <strong>Art. 6 Abs. 1 lit. b DSGVO</strong>
+    (Durchführung vorvertraglicher Maßnahmen auf Ihre Anfrage hin) sowie
+    <strong>Art. 6 Abs. 1 lit. a DSGVO</strong> (Ihre Einwilligung, die Sie über die Checkbox im Formular
+    erteilen). Ihre Einwilligung können Sie jederzeit mit Wirkung für die Zukunft widerrufen – eine
+    formlose E-Mail an uns genügt.
+  </p>
+  <p>
+    <strong>Speicherdauer:</strong> Wir speichern Ihre Anfragedaten für die Dauer der Bearbeitung und
+    anschließend für <strong>sechs Monate</strong>, um Rückfragen beantworten zu können. Danach löschen
+    wir sie, sofern kein Vertragsverhältnis zustande gekommen ist und keine gesetzlichen
+    Aufbewahrungspflichten entgegenstehen.
+  </p>
+  <p>
+    Eine Weitergabe Ihrer Daten an Dritte erfolgt nicht.
+  </p>
 
-  <h2>4. Meta-Pixel (Facebook/Instagram)</h2>
-  <p>Diese Website nutzt zu Zwecken der Reichweitenmessung und Werbung das Meta-Pixel der Meta Platforms Ireland Ltd. Das Pixel wird <strong>erst nach Ihrer ausdrücklichen Einwilligung</strong> über das Cookie-Banner geladen. Dabei können Daten an Meta – auch in die USA – übertragen werden.</p>
-  <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. a DSGVO (Einwilligung). Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen.</p>
-  <p class="ph">[PLATZHALTER: Konkrete Angaben zu erfassten Events (PageView, ViewContent, InitiateCheckout, Lead), Speicherdauer, Link zur Datenschutzerklärung von Meta.]</p>
+  <h2>4. Cookies und Einwilligung</h2>
+  <p>
+    Diese Website verwendet <strong>keine</strong> Cookies, die für den Betrieb nicht erforderlich sind,
+    solange Sie nicht ausdrücklich einwilligen. Es findet insbesondere keine Analyse Ihres
+    Nutzungsverhaltens ohne Ihre Zustimmung statt.
+  </p>
+  <p>
+    Sofern wir Marketing-Dienste einsetzen (siehe Ziffer 5), werden diese erst geladen, <strong>nachdem</strong>
+    Sie über unseren Einwilligungs-Hinweis aktiv zugestimmt haben. Ihre Entscheidung speichern wir lokal
+    in Ihrem Browser, damit wir Sie nicht bei jedem Besuch erneut fragen müssen. Diese Speicherung ist
+    technisch erforderlich, um Ihre Auswahl umzusetzen (§ 25 Abs. 2 Nr. 2 TDDDG).
+  </p>
 
-  <h2>5. Schriftarten</h2>
-  <p>Schriftarten werden lokal von unserem Server ausgeliefert. Es besteht keine Verbindung zu Servern von Google (kein Google-Fonts-CDN). Es werden dadurch keine Daten an Dritte übertragen.</p>
-
-  <h2>6. Ihre Rechte</h2>
-  <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie das Recht, sich bei einer Aufsichtsbehörde zu beschweren.</p>
-
-  <h2>7. Speicherdauer</h2>
-  <p class="ph">[PLATZHALTER: Angaben zur Speicherdauer der Anfragedaten.]</p>
-
-  <div class="note">
-    <strong>Hinweis für Lukas:</strong> Diese Datenschutzerklärung ist ein Gerüst. Vor dem Livegang müssen Meta Pixel, Hosting-Anbieter und Formularverarbeitung konkret benannt werden (DSGVO-Pflicht). Wir empfehlen eine anwaltliche Prüfung oder einen geprüften Generator (z. B. eRecht24).
+  <h2>5. Meta-Pixel (Facebook / Instagram)</h2>
+  <p>
+    Wir bewerben unser Angebot über Anzeigen bei Facebook und Instagram. Um zu messen, ob diese Anzeigen
+    erfolgreich sind, setzen wir das <strong>Meta-Pixel</strong> der Meta Platforms Ireland Ltd.,
+    Merrion Road, Dublin 4, D04 X2K5, Irland ein.
+  </p>
+  <p>
+    Das Meta-Pixel speichert Cookies (u. a. <code>_fbp</code>) und übermittelt Daten an Meta – darunter
+    Ihre IP-Adresse, Informationen zu Ihrem Browser und Ihrem Verhalten auf dieser Seite (z. B. dass Sie
+    das Angebot angesehen oder das Formular abgeschickt haben). Diese Daten können von Meta Ihrem
+    Nutzerkonto zugeordnet und für eigene Werbezwecke verwendet werden. Eine Übermittlung in die USA
+    kann dabei nicht ausgeschlossen werden.
+  </p>
+  <p>
+    <strong>Das Meta-Pixel wird ausschließlich nach Ihrer ausdrücklichen Einwilligung geladen.</strong>
+    Rechtsgrundlage ist <strong>Art. 6 Abs. 1 lit. a DSGVO</strong> in Verbindung mit
+    <strong>§ 25 Abs. 1 TDDDG</strong>. Erteilen Sie keine Einwilligung, wird das Pixel nicht ausgeführt
+    und es werden keine entsprechenden Cookies gesetzt.
+  </p>
+  <p>
+    Meta ist gemeinsam mit uns für die Erhebung und Übermittlung der Daten verantwortlich
+    (Art. 26 DSGVO). Weitere Informationen finden Sie in der
+    <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">Datenschutzrichtlinie von Meta</a>.
+  </p>
+  <div class="box">
+    <strong>Einwilligung ändern oder widerrufen</strong>
+    <p style="margin:8px 0 0">
+      Sie können Ihre Entscheidung jederzeit mit Wirkung für die Zukunft ändern:
+    </p>
+    <button class="revoke" type="button" id="revoke">Cookie-Einstellungen zurücksetzen</button>
+    <p id="revoke-msg" style="margin:10px 0 0;display:none;color:var(--luna-700)"><strong>Ihre Auswahl wurde zurückgesetzt.</strong> Beim nächsten Seitenaufruf werden Sie erneut gefragt.</p>
   </div>
+
+  <h2>6. Schriftarten</h2>
+  <p>
+    Diese Website bindet <strong>keine externen Schriftarten</strong> ein. Es wird insbesondere kein
+    Google-Fonts-CDN verwendet. Dargestellt werden ausschließlich Schriftarten, die bereits auf Ihrem
+    Gerät vorhanden sind. Eine Übertragung Ihrer IP-Adresse an Dritte findet dadurch nicht statt.
+  </p>
+
+  <h2>7. Ihre Rechte</h2>
+  <p>Ihnen stehen gegenüber uns folgende Rechte hinsichtlich Ihrer personenbezogenen Daten zu:</p>
+  <ul>
+    <li><strong>Auskunft</strong> über die von uns verarbeiteten Daten (Art. 15 DSGVO)</li>
+    <li><strong>Berichtigung</strong> unrichtiger Daten (Art. 16 DSGVO)</li>
+    <li><strong>Löschung</strong> (Art. 17 DSGVO)</li>
+    <li><strong>Einschränkung der Verarbeitung</strong> (Art. 18 DSGVO)</li>
+    <li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO)</li>
+    <li><strong>Widerspruch</strong> gegen Verarbeitungen auf Grundlage berechtigter Interessen (Art. 21 DSGVO)</li>
+    <li><strong>Widerruf einer erteilten Einwilligung</strong> mit Wirkung für die Zukunft (Art. 7 Abs. 3 DSGVO)</li>
+  </ul>
+  <p>
+    Zur Ausübung genügt eine formlose Nachricht an
+    <a href="mailto:lukas.sehorz@flowstate-ai.net">lukas.sehorz@flowstate-ai.net</a>.
+  </p>
+
+  <h2>8. Beschwerderecht bei der Aufsichtsbehörde</h2>
+  <p>
+    Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung Ihrer
+    personenbezogenen Daten zu beschweren. Für uns zuständig ist:
+  </p>
+  <p>
+    Bayerisches Landesamt für Datenschutzaufsicht (BayLDA)<br>
+    Promenade 27, 91522 Ansbach<br>
+    <a href="https://www.lda.bayern.de" target="_blank" rel="noopener">www.lda.bayern.de</a>
+  </p>
+
+  <h2>9. SSL-/TLS-Verschlüsselung</h2>
+  <p>
+    Diese Website nutzt aus Sicherheitsgründen eine SSL- bzw. TLS-Verschlüsselung. Eine verschlüsselte
+    Verbindung erkennen Sie daran, dass die Adresszeile Ihres Browsers mit „https://" beginnt. Daten, die
+    Sie über das Formular an uns übermitteln, können dadurch nicht von Dritten mitgelesen werden.
+  </p>
+
+  <h2>10. Änderungen dieser Datenschutzerklärung</h2>
+  <p>
+    Wir passen diese Datenschutzerklärung an, sobald sich die Datenverarbeitung auf dieser Website
+    ändert – etwa wenn neue Dienste hinzukommen. Es gilt jeweils die hier veröffentlichte Fassung.
+  </p>
 </div>
+
+<script>
+  document.getElementById('revoke').addEventListener('click', function(){
+    try { localStorage.removeItem('fs_consent'); } catch(e){}
+    document.getElementById('revoke-msg').style.display = 'block';
+  });
+</script>
 </body>
 </html>

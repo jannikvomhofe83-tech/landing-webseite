@@ -529,6 +529,33 @@
   .mobile-cta .btn { width: 100%; }
 
   /* =========================================================
+     COOKIE-/CONSENT-BANNER
+     Erscheint nur, wenn META_PIXEL_ID gesetzt ist – sonst setzt
+     die Seite keine Cookies und es gibt nichts einzuwilligen.
+     ========================================================= */
+  .consent {
+    position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 200;
+    max-width: 560px; margin: 0 auto;
+    background: #fff; border: 1px solid var(--border); border-radius: var(--r-xl);
+    box-shadow: var(--shadow-lg); padding: 24px;
+    display: none;
+  }
+  .consent.show { display: block; }
+  .consent h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .consent p { font-size: 14px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 16px; }
+  .consent-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .consent-actions .btn { flex: 1 1 auto; min-height: 46px; padding: 12px 18px; font-size: 15px; }
+  .consent-decline {
+    background: transparent; color: var(--luna-700);
+    border: 1.5px solid var(--border);
+  }
+  .consent-decline:hover { background: var(--bg-tint); }
+  @media (max-width: 640px) {
+    .consent { left: 12px; right: 12px; bottom: 12px; padding: 20px; }
+    .consent-actions .btn { flex: 1 1 100%; }
+  }
+
+  /* =========================================================
      SCROLL REVEAL ANIMATIONS
      ========================================================= */
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity .4s var(--ease), transform .4s var(--ease); }
@@ -913,7 +940,7 @@
         <div class="form-success">
           <div class="ok-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
           <h3>Danke, <span class="success-name">wir haben Ihre Anfrage</span>.</h3>
-          <p>Wir melden uns innerhalb von 24 Stunden bei Ihnen. Falls es eilt, erreichen Sie uns direkt: <strong>[PLATZHALTER Telefonnummer]</strong></p>
+          <p>Wir melden uns innerhalb von 24 Stunden bei Ihnen. Falls es eilt, erreichen Sie uns direkt: <strong><a href="tel:+491723465896" style="color:inherit">0172 3465896</a></strong></p>
         </div>
       </div>
     </div>
@@ -983,13 +1010,14 @@
       </div>
       <div>
         <h4>Kontakt</h4>
-        <p>[PLATZHALTER: Anschrift]<br>[PLATZHALTER: Telefon]<br><a href="mailto:kontakt@flowstate.de">[PLATZHALTER: E-Mail]</a></p>
+        <p>Orlfing 1<br>84405 Dorfen<br><a href="tel:+491723465896">0172 3465896</a><br><a href="mailto:lukas.sehorz@flowstate-ai.net">lukas.sehorz@flowstate-ai.net</a></p>
       </div>
       <div>
         <h4>Rechtliches</h4>
         <div class="footer-links">
           <a href="/impressum.html">Impressum</a>
           <a href="/datenschutz.html">Datenschutzerklärung</a>
+          <a href="/datenschutz.html#cookies" id="cookie-settings" hidden>Cookie-Einstellungen</a>
         </div>
       </div>
     </div>
@@ -1002,6 +1030,21 @@
 <!-- ============================ S13 MOBILE STICKY CTA ============================ -->
 <div class="mobile-cta" id="mobile-cta">
   <a href="#erstgespraech" class="btn btn-primary" data-cta="sticky">Kostenloses Erstgespräch →</a>
+</div>
+
+<!-- ============================ COOKIE-/CONSENT-BANNER ============================ -->
+<div class="consent" id="consent" role="dialog" aria-labelledby="consent-title" aria-describedby="consent-text">
+  <h3 id="consent-title">Dürfen wir messen, ob unsere Werbung funktioniert?</h3>
+  <p id="consent-text">
+    Wir würden gerne das Meta-Pixel laden, um zu sehen, ob unsere Anzeigen bei Facebook und Instagram
+    ankommen. Dabei werden Cookies gesetzt und Daten an Meta übertragen. Das ist rein freiwillig –
+    die Seite funktioniert ohne Einschränkung, wenn Sie ablehnen. Details in der
+    <a href="/datenschutz.html">Datenschutzerklärung</a>.
+  </p>
+  <div class="consent-actions">
+    <button type="button" class="btn consent-decline" id="consent-decline">Ablehnen</button>
+    <button type="button" class="btn btn-primary" id="consent-accept">Einverstanden</button>
+  </div>
 </div>
 
 <script>
@@ -1246,6 +1289,65 @@ function svgIcon(name){
     }
   }, { threshold: 0.3 });
   io.observe(offer);
+})();
+
+/* =========================================================
+   COOKIE-/CONSENT-STEUERUNG
+   ---------------------------------------------------------
+   META_PIXEL_ID leer  -> keine Cookies, KEIN Banner (aktueller Stand)
+   META_PIXEL_ID gesetzt -> Banner erscheint, Pixel lädt NUR nach Zustimmung
+   Zum Aktivieren einfach die Pixel-ID eintragen, sonst nichts ändern.
+   ========================================================= */
+const META_PIXEL_ID = ''; // <-- hier die Meta-Pixel-ID eintragen, z. B. '123456789012345'
+
+(function(){
+  const KEY = 'fs_consent';
+  const banner = document.getElementById('consent');
+  if(!banner) return;
+
+  function getConsent(){
+    try { return localStorage.getItem(KEY); } catch(e){ return null; }
+  }
+  function setConsent(v){
+    try { localStorage.setItem(KEY, v); } catch(e){}
+  }
+
+  function loadPixel(){
+    if(!META_PIXEL_ID || window.fbq) return;
+    /* offizieller Meta-Pixel-Loader – wird erst hier ausgeführt */
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+    (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    window.fbq('init', META_PIXEL_ID);
+    window.fbq('track', 'PageView');
+  }
+
+  /* Ohne Pixel-ID gibt es nichts einzuwilligen -> Banner und Footer-Link bleiben aus */
+  if(!META_PIXEL_ID) return;
+
+  const link = document.getElementById('cookie-settings');
+  if(link){
+    link.hidden = false;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      try { localStorage.removeItem(KEY); } catch(err){}
+      banner.classList.add('show');
+      banner.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  const decision = getConsent();
+  if(decision === 'accepted'){ loadPixel(); }
+  else if(decision !== 'declined'){ banner.classList.add('show'); }
+
+  document.getElementById('consent-accept').addEventListener('click', function(){
+    setConsent('accepted'); banner.classList.remove('show'); loadPixel();
+  });
+  document.getElementById('consent-decline').addEventListener('click', function(){
+    setConsent('declined'); banner.classList.remove('show');
+  });
 })();
 
 /* Website-Link-Feld einblenden, wenn eine Website vorhanden ist */
