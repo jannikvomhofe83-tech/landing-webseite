@@ -13,7 +13,7 @@
 <meta property="og:title" content="Ihre neue Website für 1 €. Danach 100 € im Monat." />
 <meta property="og:description" content="Alles inklusive: Design, Hosting, Wartung, Änderungen. Monatlich kündbar. Für Unternehmen und Selbständige." />
 <meta property="og:locale" content="de_DE" />
-<!-- OG-Image: 1200x630, Preis-Badge auf hellem Hintergrund (von Lukas ergänzen) -->
+<!-- OG-Image: 1200x630, Preis-Badge auf hellem Hintergrund (noch zu ergänzen) -->
 <!-- <meta property="og:image" content="/og-image.png" /> -->
 
 <link rel="canonical" href="/" />
@@ -240,7 +240,30 @@
 
   .hero-stage { margin: 48px auto 0; max-width: 760px; }
 
-  /* Video-Platzhalter */
+  /* Vorstellungsvideo */
+  .video-wrap {
+    position: relative; aspect-ratio: 16 / 9;
+    border-radius: var(--r-xl); overflow: hidden;
+    background: var(--luna-900); box-shadow: var(--shadow-lg);
+  }
+  .video-wrap .hero-video {
+    width: 100%; height: 100%; display: block; object-fit: cover;
+    border-radius: 0; box-shadow: none;
+  }
+  .video-play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 84px; height: 84px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,.96); color: var(--luna-700);
+    display: grid; place-items: center; cursor: pointer;
+    box-shadow: 0 0 0 0 rgba(167,235,242,.5);
+    animation: vpulse 2.6s ease-out infinite;
+    transition: transform .18s ease-out, background-color .18s ease-out;
+  }
+  .video-play svg { width: 32px; height: 32px; margin-left: 5px; }
+  .video-play:hover { transform: translate(-50%, -50%) scale(1.06); background: #fff; }
+  .video-wrap.playing .video-play { display: none; }
+
+  /* Alter Platzhalter – bleibt als Fallback-Styling erhalten */
   .video-placeholder {
     position: relative; aspect-ratio: 16 / 9; border-radius: var(--r-xl);
     background: linear-gradient(150deg, var(--luna-700), var(--luna-900));
@@ -458,9 +481,10 @@
      ========================================================= */
   .about { background: var(--bg-tint); }
   .about-grid { display: grid; grid-template-columns: 42fr 58fr; gap: 56px; align-items: center; }
-  .about-photo { aspect-ratio: 4/3; border-radius: 16px; background: linear-gradient(135deg, var(--luna-500), var(--luna-700)); display: grid; place-items: center; color: rgba(255,255,255,.8); box-shadow: var(--shadow-md); overflow: hidden; }
-  .about-photo .ph { text-align: center; font-size: 14px; padding: 24px; }
-  .about-photo .ph svg { width: 48px; height: 48px; margin: 0 auto 12px; opacity: .85; }
+  .about-photo {
+    width: 100%; height: auto; aspect-ratio: 4/5; object-fit: cover; object-position: center top;
+    border-radius: 16px; box-shadow: var(--shadow-md); display: block;
+  }
   .about h2 { margin-bottom: var(--s-5); }
   .about p { font-size: 17px; color: var(--text-primary); margin-bottom: var(--s-4); line-height: 1.7; }
   .about p strong { color: var(--luna-700); }
@@ -512,6 +536,7 @@
   .footer-grid .logo { color: #fff; margin-bottom: var(--s-4); }
   .footer-logo-img { height: 40px; width: auto; display: block; margin-bottom: var(--s-4); }
   .footer-links a { display: block; margin-bottom: 8px; }
+  .footer-links a[hidden] { display: none; } /* sonst überschreibt display:block das hidden-Attribut */
   .footer-bottom { border-top: 1px solid rgba(255,255,255,.12); margin-top: 48px; padding-top: 24px; font-size: 13px; color: rgba(255,255,255,.55); }
 
   /* =========================================================
@@ -627,6 +652,8 @@
     .hero h1 { font-size: 30px; }
     .hero-lead { font-size: 17px; }
     .hero-stage { margin-top: 32px; }
+    .video-play { width: 62px; height: 62px; }
+    .video-play svg { width: 24px; height: 24px; margin-left: 4px; }
     .video-placeholder .play-btn { width: 60px; height: 60px; }
     .video-placeholder .play-btn svg { width: 24px; height: 24px; }
     .video-caption { font-size: 16px; }
@@ -709,18 +736,20 @@
     </div>
 
     <div class="hero-stage">
-      <!-- Video-Platzhalter (später ersetzen) -->
-      <div class="video-placeholder reveal" role="img" aria-label="Platzhalter für das Vorstellungsvideo – folgt in Kürze">
-        <!-- SPÄTER ERSETZEN durch selbst gehostetes Video (kein YouTube -> DSGVO):
-             <video class="hero-video" controls preload="none" poster="Bilder/video-poster.jpg">
-               <source src="Bilder/hero-video.mp4" type="video/mp4" />
-             </video>
-        -->
-        <span class="play-btn" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        </span>
-        <span class="video-caption">Ihr Vorstellungsvideo</span>
-        <span class="video-sub">Platzhalter – Video folgt in Kürze</span>
+      <!-- Vorstellungsvideo – selbst gehostet (kein YouTube -> DSGVO, kein Fremd-Branding).
+           preload="none": Es lädt zunächst NUR das Poster (79 KB), das Video erst auf Klick. -->
+      <div class="video-wrap reveal" id="video-wrap">
+        <video id="hero-video" class="hero-video"
+               poster="Bilder/video-poster.jpg"
+               preload="none" playsinline
+               aria-label="Vorstellungsvideo von Flowstate AI Solutions">
+          <source src="Bilder/hero-video.mp4" type="video/mp4" />
+          Ihr Browser kann dieses Video nicht abspielen.
+          <a href="Bilder/hero-video.mp4">Video herunterladen</a>
+        </video>
+        <button class="video-play" id="video-play" type="button" aria-label="Video abspielen">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        </button>
       </div>
     </div>
 
@@ -877,18 +906,14 @@
 <section class="about" id="about">
   <div class="container">
     <div class="about-grid">
-      <div class="about-photo reveal" role="img" aria-label="Platzhalter: Foto der beiden Gründer Lukas Sehorz und Jannik vom Hofe">
-        <div class="ph">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Platzhalter: Echtes Foto der beiden Gründer
-        </div>
-      </div>
+      <img src="Bilder/jannik.webp" alt="Jannik vom Hofe, Gründer von Flowstate AI Solutions"
+           class="about-photo reveal" width="900" height="1125" loading="lazy" />
       <div class="about-text reveal">
         <h2>Wer hinter Flowstate steckt</h2>
-        <p>Wir sind <strong>Lukas Sehorz</strong> und <strong>Jannik vom Hofe</strong> – Flowstate AI Solutions aus Dorfen in Bayern.</p>
-        <p>Wir bauen Websites für Unternehmen und Selbständige. Keine Konzerne, keine Agentur mit 40 Stockwerken und einem Ticketsystem. Sie haben bei uns zwei Ansprechpartner, die Sie beim Namen kennen und ans Telefon gehen.</p>
-        <p>Wir haben das 1-€-Modell entwickelt, weil wir es leid waren, zu sehen, wie kleine Betriebe entweder 5.000 € vorstrecken müssen oder gleich beim Baukasten landen. Beides ist keine gute Lösung. Unsere ist eine.</p>
-        <p style="color:var(--text-muted);font-style:italic;">[PLATZHALTER: Ein persönlicher Satz – warum Webdesign, seit wann, was euch antreibt.]</p>
+        <p>Ich bin <strong>Jannik vom Hofe</strong> – Flowstate AI Solutions aus Dorfen in Bayern.</p>
+        <p>Ich baue Websites für Unternehmen und Selbständige. Keine Konzerne, keine Agentur mit 40 Stockwerken und einem Ticketsystem. Sie haben bei mir einen festen Ansprechpartner, den Sie beim Namen kennen und der ans Telefon geht.</p>
+        <p>Ich habe das 1-€-Modell entwickelt, weil ich es leid war, zuzusehen, wie kleine Betriebe entweder 5.000 € vorstrecken müssen oder gleich beim Baukasten landen. Beides ist keine gute Lösung. Meine ist eine.</p>
+        <p>Angefangen hat es damit, dass ich in meiner Region immer wieder dasselbe gesehen habe: Betriebe, die hervorragende Arbeit machen – und eine Website, die davon nichts zeigt. Das hat mich so lange gestört, bis ich beschlossen habe, es selbst besser zu machen.</p>
       </div>
     </div>
   </div>
@@ -1034,7 +1059,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      © 2026 Sehorz Lukas, vom Hofe Jannik GbR – Flowstate AI Solutions
+      © 2026 Flowstate AI Solutions
     </div>
   </div>
 </footer>
@@ -1080,7 +1105,7 @@
 
 <script>
 /* =========================================================
-   DATEN (von Lukas befüllbar)
+   DATEN (frei befüllbar)
    ========================================================= */
 const painPoints = [
   { icon: 'layout', title: 'Ihre Website sieht aus wie 2015.', text: 'Verlaufsbalken, Schlagschatten, überladene Startseite. Ihre Besucher entscheiden in 0,05 Sekunden, ob sie Ihnen vertrauen – und Ihre Website antwortet mit „veraltet".' },
@@ -1098,7 +1123,7 @@ const stats = [
   { num: '+90 %', text: 'höhere Absprungrate, wenn Ihre Seite 5 statt 1 Sekunde lädt. Fast jeder zweite Besucher ist weg, bevor Ihre Startseite steht.', source: 'Google/SOASTA Research, 2017' }
 ];
 
-/* referenzen: Lukas ersetzt name/branche/ort/url/bild später.
+/* referenzen: name/branche/ort/url/bild – jederzeit erweiterbar.
    Grid nutzt auto-fit -> sieht mit 3, 4, 5, 6 oder 9 Einträgen sauber aus. */
 const referenzen = [
   { name: 'Taxiizi', branche: 'Taxiunternehmen', ort: 'München', url: 'https://taxi-izi.de/', bild: 'Bilder/ref-taxiizi.webp' },
@@ -1424,6 +1449,29 @@ const META_PIXEL_ID = '';
   });
   document.getElementById('consent-save').addEventListener('click', function(){
     decide({ statistik: CATS.statistik && cbStat.checked, marketing: CATS.marketing && cbMark.checked });
+  });
+})();
+
+/* Hero-Video: Play-Button startet, Overlay verschwindet */
+(function(){
+  const wrap = document.getElementById('video-wrap');
+  const vid  = document.getElementById('hero-video');
+  const btn  = document.getElementById('video-play');
+  if(!wrap || !vid || !btn) return;
+
+  /* Controls erst ab dem Start einblenden – davor nur Poster + großer Play-Button */
+  btn.addEventListener('click', function(){
+    vid.controls = true;
+    vid.play();
+  });
+  vid.addEventListener('play', function(){
+    vid.controls = true;
+    wrap.classList.add('playing');
+  });
+  vid.addEventListener('ended', function(){
+    vid.controls = false;
+    vid.currentTime = 0;
+    wrap.classList.remove('playing');
   });
 })();
 

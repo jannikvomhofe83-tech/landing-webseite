@@ -7,3 +7,9 @@
 # Editor/OS
 Thumbs.db
 *.log
+
+# Rohmaterial Video (Original 427 MB) – nicht ins Repo.
+# Im Repo liegt nur die web-optimierte Fassung Bilder/hero-video.mp4 (26 MB).
+Bilder/0719*.mp4
+Bilder/*-original.mp4
+Bilder/Rohmaterial/
