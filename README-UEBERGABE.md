@@ -34,6 +34,37 @@ Suche im Code nach `PLATZHALTER` bzw. `[XX]`:
 7. **Impressum / Datenschutz:** alle `[PLATZHALTER]` mit echten Angaben füllen.
 8. **OG-Image:** 1200×630-Bild erzeugen und im `<head>` verlinken.
 
+## Tracking aktivieren (Cookies / Consent)
+
+Die Consent-Lösung ist **fertig gebaut und getestet** – sie ist nur noch nicht scharf geschaltet.
+In `index.html` ganz oben im `<script>`:
+
+```js
+const GA4_ID        = '';   // Google Analytics 4  -> Kategorie „Statistik"
+const META_PIXEL_ID = '';   // Meta-Pixel          -> Kategorie „Marketing"
+```
+
+**Beide leer = aktueller Zustand:** Die Seite setzt keine Cookies, es erscheint kein Banner.
+Das ist rechtlich sauber und kostet keine Conversions.
+
+**Sobald eine ID eingetragen ist:** Banner erscheint automatisch, nur die konfigurierte Kategorie
+wird angezeigt, und der Dienst lädt **erst nach aktiver Zustimmung**. Widerruf über den
+Footer-Link „Cookie-Einstellungen" und über die Datenschutzseite.
+
+### Empfehlung für „wie viele Besucher und woher"
+Dafür braucht ihr **keine Cookies**. Cookiefreie Alternativen laufen serverseitig bzw. ohne
+Cookies und benötigen daher **kein Banner**:
+
+- **Netlify Analytics** (~9 $/Monat) – ihr hostet ohnehin dort, komplett serverseitig
+- **Plausible** / **Fathom** – EU-Hosting, cookiefrei
+
+Dann `GA4_ID` leer lassen. In `datenschutz.html` liegt der passende Abschnitt als
+auskommentierter Block bereit (**Variante A**). Bei Google Analytics stattdessen **Variante B**
+einkommentieren – dort ist die Einwilligung zwingend.
+
+> Wichtig: Den Abschnitt in der Datenschutzerklärung **erst einkommentieren, wenn das Tool
+> wirklich läuft** – sonst beschreibt die Erklärung etwas, das es nicht gibt.
+
 ## Noch anzubinden (technisch)
 - **Formular-Backend:** aktuell zeigt das Formular einen Inline-Success-State (Demo). In `index.html`
   im Submit-Handler `// Produktion: hier fetch() an das Backend/CRM anbinden` ersetzen (z. B. Formspree,

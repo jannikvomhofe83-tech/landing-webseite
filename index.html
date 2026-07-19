@@ -542,16 +542,28 @@
   }
   .consent.show { display: block; }
   .consent h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-  .consent p { font-size: 14px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 16px; }
+  .consent p { font-size: 14px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 14px; }
+
+  /* Granulare Auswahl: Statistik und Marketing getrennt */
+  .consent-options { border-top: 1px solid var(--border); margin-bottom: 14px; }
+  .consent-opt {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .consent-opt input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; accent-color: var(--luna-700); cursor: pointer; }
+  .consent-opt label { font-size: 14px; line-height: 1.5; cursor: pointer; }
+  .consent-opt label strong { display: block; color: var(--luna-900); font-weight: 600; margin-bottom: 2px; }
+  .consent-opt label span { color: var(--text-muted); font-size: 13px; }
+
   .consent-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-  .consent-actions .btn { flex: 1 1 auto; min-height: 46px; padding: 12px 18px; font-size: 15px; }
-  .consent-decline {
+  .consent-actions .btn { flex: 1 1 auto; min-height: 46px; padding: 12px 16px; font-size: 15px; }
+  .consent-secondary {
     background: transparent; color: var(--luna-700);
     border: 1.5px solid var(--border);
   }
-  .consent-decline:hover { background: var(--bg-tint); }
+  .consent-secondary:hover { background: var(--bg-tint); }
   @media (max-width: 640px) {
-    .consent { left: 12px; right: 12px; bottom: 12px; padding: 20px; }
+    .consent { left: 12px; right: 12px; bottom: 12px; padding: 20px; max-height: 88vh; overflow-y: auto; }
     .consent-actions .btn { flex: 1 1 100%; }
   }
 
@@ -1034,16 +1046,35 @@
 
 <!-- ============================ COOKIE-/CONSENT-BANNER ============================ -->
 <div class="consent" id="consent" role="dialog" aria-labelledby="consent-title" aria-describedby="consent-text">
-  <h3 id="consent-title">Dürfen wir messen, ob unsere Werbung funktioniert?</h3>
+  <h3 id="consent-title">Dürfen wir messen, wie diese Seite genutzt wird?</h3>
   <p id="consent-text">
-    Wir würden gerne das Meta-Pixel laden, um zu sehen, ob unsere Anzeigen bei Facebook und Instagram
-    ankommen. Dabei werden Cookies gesetzt und Daten an Meta übertragen. Das ist rein freiwillig –
-    die Seite funktioniert ohne Einschränkung, wenn Sie ablehnen. Details in der
+    Für den Betrieb der Seite brauchen wir keine Cookies. Freiwillig können Sie uns erlauben,
+    zu messen, wie viele Menschen die Seite besuchen und ob unsere Anzeigen ankommen. Die Seite
+    funktioniert ohne Einschränkung, wenn Sie ablehnen. Details in der
     <a href="/datenschutz.html">Datenschutzerklärung</a>.
   </p>
+
+  <div class="consent-options" id="consent-options">
+    <div class="consent-opt" data-cat="statistik" hidden>
+      <input type="checkbox" id="c-statistik" />
+      <label for="c-statistik">
+        <strong>Statistik</strong>
+        <span>Anonyme Auswertung, wie viele Besucher die Seite hat und woher sie kommen.</span>
+      </label>
+    </div>
+    <div class="consent-opt" data-cat="marketing" hidden>
+      <input type="checkbox" id="c-marketing" />
+      <label for="c-marketing">
+        <strong>Marketing</strong>
+        <span>Meta-Pixel: misst, ob unsere Anzeigen bei Facebook und Instagram funktionieren. Daten gehen an Meta.</span>
+      </label>
+    </div>
+  </div>
+
   <div class="consent-actions">
-    <button type="button" class="btn consent-decline" id="consent-decline">Ablehnen</button>
-    <button type="button" class="btn btn-primary" id="consent-accept">Einverstanden</button>
+    <button type="button" class="btn consent-secondary" id="consent-decline">Alle ablehnen</button>
+    <button type="button" class="btn consent-secondary" id="consent-save">Auswahl speichern</button>
+    <button type="button" class="btn btn-primary" id="consent-accept">Alle akzeptieren</button>
   </div>
 </div>
 
@@ -1294,22 +1325,48 @@ function svgIcon(name){
 /* =========================================================
    COOKIE-/CONSENT-STEUERUNG
    ---------------------------------------------------------
-   META_PIXEL_ID leer  -> keine Cookies, KEIN Banner (aktueller Stand)
-   META_PIXEL_ID gesetzt -> Banner erscheint, Pixel lädt NUR nach Zustimmung
-   Zum Aktivieren einfach die Pixel-ID eintragen, sonst nichts ändern.
+   HIER EINTRAGEN – sonst nichts ändern:
+
+   GA4_ID        Google Analytics 4, z. B. 'G-XXXXXXXXXX'  -> Kategorie „Statistik"
+   META_PIXEL_ID Meta-Pixel,        z. B. '123456789012345' -> Kategorie „Marketing"
+
+   Beide leer  -> die Seite setzt KEINE Cookies, es erscheint KEIN Banner.
+   Sobald eine ID eingetragen ist, erscheint das Banner und der jeweilige Dienst
+   wird ERST nach aktiver Zustimmung geladen.
+
+   WICHTIG: Cookiefreie Analytics (Netlify Analytics, Plausible, Fathom) laufen
+   serverseitig bzw. ohne Cookies und brauchen KEINE Einwilligung. Dann GA4_ID
+   leer lassen – das Banner bleibt für Statistik dann zu Recht aus.
    ========================================================= */
-const META_PIXEL_ID = ''; // <-- hier die Meta-Pixel-ID eintragen, z. B. '123456789012345'
+const GA4_ID        = '';
+const META_PIXEL_ID = '';
 
 (function(){
   const KEY = 'fs_consent';
   const banner = document.getElementById('consent');
   if(!banner) return;
 
-  function getConsent(){
-    try { return localStorage.getItem(KEY); } catch(e){ return null; }
+  const CATS = { statistik: !!GA4_ID, marketing: !!META_PIXEL_ID };
+  const anyCat = CATS.statistik || CATS.marketing;
+
+  function read(){
+    try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){ return null; }
   }
-  function setConsent(v){
-    try { localStorage.setItem(KEY, v); } catch(e){}
+  function write(obj){
+    try { localStorage.setItem(KEY, JSON.stringify(obj)); } catch(e){}
+  }
+
+  function loadAnalytics(){
+    if(!GA4_ID || window.__ga_loaded) return;
+    window.__ga_loaded = true;
+    const s = document.createElement('script');
+    s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ window.dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', GA4_ID, { anonymize_ip: true });
   }
 
   function loadPixel(){
@@ -1324,29 +1381,49 @@ const META_PIXEL_ID = ''; // <-- hier die Meta-Pixel-ID eintragen, z. B. '123456
     window.fbq('track', 'PageView');
   }
 
-  /* Ohne Pixel-ID gibt es nichts einzuwilligen -> Banner und Footer-Link bleiben aus */
-  if(!META_PIXEL_ID) return;
+  function apply(c){
+    if(c.statistik) loadAnalytics();
+    if(c.marketing) loadPixel();
+  }
+
+  /* Kein einwilligungspflichtiger Dienst konfiguriert -> nichts anzeigen */
+  if(!anyCat) return;
+
+  /* Nur die tatsächlich genutzten Kategorien im Banner zeigen */
+  banner.querySelectorAll('.consent-opt').forEach(function(el){
+    el.hidden = !CATS[el.dataset.cat];
+  });
+
+  const cbStat = document.getElementById('c-statistik');
+  const cbMark = document.getElementById('c-marketing');
 
   const link = document.getElementById('cookie-settings');
   if(link){
     link.hidden = false;
     link.addEventListener('click', function(e){
       e.preventDefault();
-      try { localStorage.removeItem(KEY); } catch(err){}
+      const cur = read() || {};
+      cbStat.checked = !!cur.statistik;
+      cbMark.checked = !!cur.marketing;
       banner.classList.add('show');
-      banner.scrollIntoView({ block: 'nearest' });
     });
   }
 
-  const decision = getConsent();
-  if(decision === 'accepted'){ loadPixel(); }
-  else if(decision !== 'declined'){ banner.classList.add('show'); }
+  const saved = read();
+  if(saved){ apply(saved); }
+  else { banner.classList.add('show'); }
 
+  function decide(c){
+    write(c); banner.classList.remove('show'); apply(c);
+  }
   document.getElementById('consent-accept').addEventListener('click', function(){
-    setConsent('accepted'); banner.classList.remove('show'); loadPixel();
+    decide({ statistik: CATS.statistik, marketing: CATS.marketing });
   });
   document.getElementById('consent-decline').addEventListener('click', function(){
-    setConsent('declined'); banner.classList.remove('show');
+    decide({ statistik: false, marketing: false });
+  });
+  document.getElementById('consent-save').addEventListener('click', function(){
+    decide({ statistik: CATS.statistik && cbStat.checked, marketing: CATS.marketing && cbMark.checked });
   });
 })();
 

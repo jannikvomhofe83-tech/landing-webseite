@@ -113,10 +113,24 @@
     Nutzungsverhaltens ohne Ihre Zustimmung statt.
   </p>
   <p>
-    Sofern wir Marketing-Dienste einsetzen (siehe Ziffer 5), werden diese erst geladen, <strong>nachdem</strong>
-    Sie über unseren Einwilligungs-Hinweis aktiv zugestimmt haben. Ihre Entscheidung speichern wir lokal
-    in Ihrem Browser, damit wir Sie nicht bei jedem Besuch erneut fragen müssen. Diese Speicherung ist
-    technisch erforderlich, um Ihre Auswahl umzusetzen (§ 25 Abs. 2 Nr. 2 TDDDG).
+    Sofern wir einwilligungspflichtige Dienste einsetzen, werden diese erst geladen, <strong>nachdem</strong>
+    Sie über unseren Einwilligungs-Hinweis aktiv zugestimmt haben. Sie können dabei getrennt entscheiden:
+  </p>
+  <ul>
+    <li><strong>Statistik</strong> – anonyme Auswertung, wie viele Besucher die Seite hat und woher sie kommen</li>
+    <li><strong>Marketing</strong> – Messung, ob unsere Anzeigen bei Facebook und Instagram funktionieren (siehe Ziffer 5)</li>
+  </ul>
+  <p>
+    Eine Einwilligung in die eine Kategorie bedeutet nicht automatisch eine Einwilligung in die andere.
+    Ihre Entscheidung speichern wir lokal in Ihrem Browser (<code>localStorage</code>), damit wir Sie nicht
+    bei jedem Besuch erneut fragen müssen. Diese Speicherung ist technisch erforderlich, um Ihre Auswahl
+    umzusetzen (§ 25 Abs. 2 Nr. 2 TDDDG), und enthält keine personenbezogenen Daten.
+  </p>
+  <p>
+    <strong>Aktueller Stand:</strong> Derzeit ist kein einwilligungspflichtiger Dienst aktiv. Die Seite
+    setzt keine Cookies, und der Einwilligungs-Hinweis wird deshalb nicht angezeigt. Sobald wir einen
+    solchen Dienst aktivieren, erscheint der Hinweis automatisch und diese Erklärung wird entsprechend
+    ergänzt.
   </p>
 
   <h2>5. Meta-Pixel (Facebook / Instagram)</h2>
@@ -151,6 +165,62 @@
     <button class="revoke" type="button" id="revoke">Cookie-Einstellungen zurücksetzen</button>
     <p id="revoke-msg" style="margin:10px 0 0;display:none;color:var(--luna-700)"><strong>Ihre Auswahl wurde zurückgesetzt.</strong> Beim nächsten Seitenaufruf werden Sie erneut gefragt.</p>
   </div>
+
+  <!-- ==========================================================================
+       VORBEREITET: Abschnitt „Reichweitenmessung / Statistik"
+
+       Erst einkommentieren, wenn das Tool tatsächlich aktiv ist – sonst ist die
+       Datenschutzerklärung unzutreffend. Bitte NUR die passende Variante nutzen
+       und die nachfolgenden Ziffern (6–10) entsprechend neu durchnummerieren.
+
+       ---------------------------------------------------------------------
+       VARIANTE A – cookiefreie Analyse (Netlify Analytics / Plausible / Fathom)
+       -> KEINE Einwilligung nötig, GA4_ID in index.html leer lassen!
+       ---------------------------------------------------------------------
+  <h2>6. Reichweitenmessung</h2>
+  <p>
+    Um zu verstehen, wie viele Menschen unsere Website besuchen und über welche Wege sie zu uns
+    finden, nutzen wir <strong>[TOOL-NAME, z. B. Netlify Analytics]</strong> des Anbieters
+    <strong>[ANBIETER + ANSCHRIFT]</strong>. Die Auswertung erfolgt ausschließlich auf Basis der
+    ohnehin anfallenden Server-Logfiles bzw. anonymisierter Daten. Es werden <strong>keine Cookies
+    gesetzt</strong>, kein geräteübergreifendes Tracking durchgeführt und keine Profile gebildet.
+    Einzelne Personen sind für uns dabei nicht identifizierbar.
+  </p>
+  <p>
+    Rechtsgrundlage ist <strong>Art. 6 Abs. 1 lit. f DSGVO</strong>. Unser berechtigtes Interesse
+    liegt darin, die Reichweite und Qualität unseres Angebots zu verstehen und zu verbessern. Da
+    keine Informationen auf Ihrem Endgerät gespeichert oder ausgelesen werden, ist eine Einwilligung
+    nach § 25 TDDDG nicht erforderlich.
+  </p>
+
+       ---------------------------------------------------------------------
+       VARIANTE B – Google Analytics 4
+       -> Einwilligung ZWINGEND, GA4_ID in index.html eintragen
+       ---------------------------------------------------------------------
+  <h2>6. Google Analytics 4</h2>
+  <p>
+    Sofern Sie in die Kategorie „Statistik" eingewilligt haben, nutzen wir Google Analytics 4, einen
+    Webanalysedienst der <strong>Google Ireland Limited</strong>, Gordon House, Barrow Street,
+    Dublin 4, Irland. Google Analytics verwendet Cookies und ähnliche Technologien, um Ihre Nutzung
+    der Website auszuwerten – etwa welche Seiten aufgerufen werden, wie lange Sie bleiben und über
+    welche Quelle Sie zu uns gekommen sind.
+  </p>
+  <p>
+    Ihre IP-Adresse wird dabei gekürzt (IP-Anonymisierung), bevor sie ausgewertet wird. Eine
+    Übermittlung von Daten an die Google LLC in den USA kann dennoch nicht ausgeschlossen werden.
+    Google LLC ist nach dem EU-U.S. Data Privacy Framework zertifiziert.
+  </p>
+  <p>
+    <strong>Rechtsgrundlage ist ausschließlich Ihre Einwilligung</strong> nach
+    <strong>Art. 6 Abs. 1 lit. a DSGVO</strong> in Verbindung mit <strong>§ 25 Abs. 1 TDDDG</strong>.
+    Ohne Ihre Zustimmung wird Google Analytics nicht geladen und es werden keine entsprechenden
+    Cookies gesetzt. Sie können Ihre Einwilligung jederzeit über den Button in Ziffer 5 widerrufen.
+  </p>
+  <p>
+    Mit Google besteht ein Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO. Weitere Informationen:
+    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung von Google</a>.
+  </p>
+       ========================================================================== -->
 
   <h2>6. Schriftarten</h2>
   <p>
