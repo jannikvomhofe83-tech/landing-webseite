@@ -528,6 +528,26 @@
     background: #fff; color: var(--luna-900); border-radius: var(--r-xl); padding: 40px;
     box-shadow: 0 24px 64px rgba(1,28,64,.24);
   }
+  .success-booking-hint { margin-top: var(--s-3); }
+
+  /* =========================================================
+     S11b TERMIN BUCHEN (Calendly-Inline-Widget)
+     Hinweis: Der Kalender läuft in einem iframe – sein Inneres
+     ist von hier aus NICHT stylebar. Wir gestalten nur den Rahmen.
+     ========================================================= */
+  .booking { background: var(--bg-soft); }
+  .booking > .container { max-width: 900px; }
+  .booking .section-head { margin-bottom: var(--s-7); }
+  .calendly-shell {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--r-xl); box-shadow: var(--shadow-md);
+    padding: 8px; overflow: hidden;
+  }
+  .booking .calendly-inline-widget {
+    min-width: 320px; width: 100%; height: 700px;
+    border-radius: var(--r-lg); overflow: hidden;
+  }
+  .booking-note { margin-top: var(--s-5); text-align: center; font-size: 14px; color: var(--text-muted); }
 
   /* =========================================================
      S12 FOOTER
@@ -623,6 +643,9 @@
     .steps { grid-template-columns: repeat(2, 1fr); gap: var(--s-6); }
     .steps::before { display: none; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
+
+    /* Calendly stapelt ab hier Kalender + Slots untereinander -> mehr Höhe */
+    .booking .calendly-inline-widget { height: 800px; }
   }
 
   /* =========================================================
@@ -658,6 +681,10 @@
     .steps { grid-template-columns: 1fr; }
     .final-form-card, .hero-form-card { padding: 24px; }
     .final-benefits h2 { font-size: 28px; }
+
+    /* Handy: Kalender braucht mehr Höhe, sonst wirkt er abgeschnitten */
+    .calendly-shell { padding: 4px; border-radius: var(--r-lg); }
+    .booking .calendly-inline-widget { height: 900px; }
 
     .hero h1 { font-size: 30px; }
     .hero-lead { font-size: 17px; }
@@ -989,11 +1016,71 @@
           <div class="ok-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
           <h3>Danke, <span class="success-name">wir haben Ihre Anfrage</span>.</h3>
           <p>Wir melden uns innerhalb von 24 Stunden bei Ihnen. Falls es eilt, erreichen Sie uns direkt: <strong><a href="tel:+491723465896" style="color:inherit">0172 3465896</a></strong></p>
+          <p class="success-booking-hint">Schneller geht es direkt: <strong>Wählen Sie unten Ihren Wunschtermin.</strong></p>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- ============================ S11b TERMIN BUCHEN (Calendly) ============================ -->
+<section class="booking" id="termin-buchen">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Termin sichern</span>
+      <h2>Wählen Sie jetzt Ihren Wunschtermin</h2>
+      <p class="subline">30 Minuten, kostenlos und unverbindlich. Suchen Sie sich einfach den Zeitpunkt aus, der Ihnen am besten passt.</p>
+    </div>
+    <div class="calendly-shell">
+      <div id="calendly-embed" class="calendly-inline-widget"></div>
+    </div>
+    <p class="booking-note reveal">Kein passender Termin dabei? Rufen Sie uns an: <a href="tel:+491723465896">0172 3465896</a><br>Die Terminvergabe läuft über Calendly (Calendly LLC, USA); dabei werden die von Ihnen im Buchungsformular angegebenen Daten an Calendly übermittelt. Näheres in unserer <a href="datenschutz.html#calendly">Datenschutzerklärung</a>.</p>
+  </div>
+</section>
+
+<script>
+/* =========================================================
+   CALENDLY – Terminbuchung (Inline-Widget + UTM-Durchreichung)
+   Läuft absichtlich VOR widget.js, damit data-url bereits gesetzt
+   ist, wenn Calendly das Widget beim Laden automatisch initialisiert.
+   ========================================================= */
+(function(){
+  const CALENDLY_URL = "https://calendly.com/jannikvomhofe-flowstate-ai/30min";
+  const embed = document.getElementById('calendly-embed');
+
+  function buildCalendlyUrl(baseUrl, name, email){
+    const params = new URLSearchParams(window.location.search);
+    const url = new URL(baseUrl);
+    if(name)  url.searchParams.set('name', name);
+    if(email) url.searchParams.set('email', email);
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(key){
+      if(params.has(key)) url.searchParams.set(key, params.get(key));
+    });
+    return url.toString();
+  }
+
+  function showCalendlyWithPrefill(name, email){
+    const section = document.getElementById('termin-buchen');
+    if(!embed || !section) return;
+    const url = buildCalendlyUrl(CALENDLY_URL, name, email);
+    embed.setAttribute('data-url', url);
+    if(window.Calendly && typeof window.Calendly.initInlineWidget === 'function'){
+      embed.innerHTML = '';
+      window.Calendly.initInlineWidget({ url: url, parentElement: embed });
+    }
+    /* widget.js noch nicht geladen? Dann genügt data-url – Calendly
+       initialisiert das Widget beim Laden selbst mit dieser URL. */
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* Start-URL ohne Prefill, aber bereits mit den UTM-Parametern der Anzeige */
+  if(embed){ embed.setAttribute('data-url', buildCalendlyUrl(CALENDLY_URL, null, null)); }
+
+  window.buildCalendlyUrl = buildCalendlyUrl;
+  window.showCalendlyWithPrefill = showCalendlyWithPrefill;
+})();
+</script>
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
 <!-- ============================ S10 FAQ ============================ -->
 <section class="faq" id="faq">
@@ -1344,7 +1431,11 @@ function svgIcon(name){
       }
 
       // Erfolg (Demo). Produktion: hier fetch() an das Backend/CRM anbinden.
-      const name = (form.querySelector('input[name="name"]').value || '').trim().split(' ')[0];
+      const nameInput  = form.querySelector('input[name="name"]');
+      const emailInput = form.querySelector('input[name="email"]');
+      const fullName = ((nameInput && nameInput.value) || '').trim();
+      const email    = ((emailInput && emailInput.value) || '').trim();
+      const name = fullName.split(' ')[0];
       const card = form.parentElement;
       const success = card.querySelector('.form-success');
       const nameSpan = success.querySelector('.success-name');
@@ -1353,6 +1444,14 @@ function svgIcon(name){
       form.style.display = 'none';
       success.classList.add('show');
       track('Lead');
+
+      // Kalender mit Name + E-Mail vorbefüllen und dorthin scrollen.
+      // Kurze Verzögerung, damit die Danke-Meldung noch wahrgenommen wird.
+      if(typeof window.showCalendlyWithPrefill === 'function'){
+        window.setTimeout(function(){
+          window.showCalendlyWithPrefill(fullName, email);
+        }, 350);
+      }
     });
   });
 
