@@ -550,12 +550,19 @@
     overflow: visible;
   }
   .calendly-stage { position: relative; }
+  /* KEINE feste height: Calendly läuft mit resize:true und schreibt die
+     echte Inhaltshöhe als Inline-Style direkt auf diesen Container. Jede
+     height-Regel hier würde das überstimmen und den iframe wieder intern
+     scrollen lassen. Die min-height ist reiner Platzhalter für die
+     Skeleton-Phase und wird per .is-autosized entfernt, sobald Calendly
+     die erste echte Höhe meldet. */
   .booking #calendly-embed {
     min-width: 320px; width: 100%;
-    height: 750px; min-height: 750px;
+    min-height: 700px;
     border-radius: var(--r-lg);
     overflow: visible;
   }
+  .booking #calendly-embed.is-autosized { min-height: 0; }
   .booking #calendly-embed iframe { display: block; width: 100%; height: 100%; border: 0; }
   .booking-note { margin-top: var(--s-5); text-align: center; font-size: 14px; color: var(--text-muted); }
 
@@ -693,8 +700,10 @@
     .steps::before { display: none; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
 
-    /* Calendly stapelt ab hier Kalender + Slots untereinander -> mehr Höhe */
-    .booking #calendly-embed { height: 800px; min-height: 800px; }
+    /* Calendly stapelt ab hier Kalender + Slots untereinander -> mehr Höhe.
+       Nur Platzhalter fürs Skeleton, danach bestimmt Calendly die Höhe. */
+    .booking #calendly-embed { min-height: 800px; }
+    .booking #calendly-embed.is-autosized { min-height: 0; }
   }
 
   /* =========================================================
@@ -703,7 +712,8 @@
      bei gleicher Spezifität wieder auf 800px.
      ========================================================= */
   @media (max-width: 767px) {
-    .booking #calendly-embed { height: 900px; min-height: 900px; }
+    .booking #calendly-embed { min-height: 900px; }
+    .booking #calendly-embed.is-autosized { min-height: 0; }
     .calendly-skeleton { padding: 20px 16px; }
     .sk-grid { gap: 7px; }
   }
@@ -1171,6 +1181,35 @@
     if(skeleton) skeleton.classList.add('is-done');
   }
 
+  /* Calendly meldet seine echte Inhaltshöhe per postMessage ans Elternfenster
+     ({ event: 'calendly.page_height', payload: { height: '950px' } }) und setzt
+     sie zugleich als Inline-Style auf den Container (resize: true).
+     Ab dieser Meldung ist die Platzhalter-min-height nur noch im Weg –
+     .is-autosized nimmt sie raus, damit ausschließlich Calendly die Höhe
+     bestimmt. Gleichzeitig ist das der zuverlässigste Zeitpunkt, das
+     Skeleton auszublenden: der Kalender hat dann gerendert.
+
+     Wichtig: Calendly funkt in den ersten Millisekunden Zwischenstände wie
+     "26px" oder "2px", bevor der Kalender gerendert ist. Die dürfen weder das
+     Skeleton ausblenden noch die Platzhalter-Höhe freigeben – sonst klappt der
+     Kasten kurz auf ein paar Pixel zusammen. Erst ab einer plausiblen Höhe
+     (MIN_REAL_HEIGHT) übernimmt Calendly. */
+  const MIN_REAL_HEIGHT = 300;
+
+  function isCalendlyOrigin(origin){
+    return typeof origin === 'string' && /^https:\/\/([a-z0-9-]+\.)*calendly\.com$/.test(origin);
+  }
+
+  window.addEventListener('message', function(e){
+    if(!isCalendlyOrigin(e.origin)) return;
+    const data = e.data;
+    if(!data || typeof data !== 'object' || data.event !== 'calendly.page_height') return;
+    const height = parseInt((data.payload && data.payload.height) || '', 10);
+    if(!height || height < MIN_REAL_HEIGHT) return;
+    if(embed) embed.classList.add('is-autosized');
+    markSkeletonDone();
+  });
+
   /* Der iframe wird von Calendly synchron eingehängt, sein Inhalt lädt aber
      asynchron. Skeleton bleibt daher bis zum load-Event des iframes stehen. */
   function watchIframe(tries){
@@ -1190,7 +1229,14 @@
     const url = buildCalendlyUrl(CALENDLY_URL, a1);
     embed.setAttribute('data-url', url);
     embed.innerHTML = '';
-    window.Calendly.initInlineWidget({ url: url, parentElement: embed });
+    /* resize: true -> Calendly passt die Container-Höhe laufend an den
+       Inhalt an (Kalenderschritt vs. "Angaben"-Schritt sind unterschiedlich
+       hoch). Ohne das scrollt der iframe intern.
+       Achtung: Der Container bekommt bewusst NICHT die Klasse
+       "calendly-inline-widget" – widget.js würde ihn beim Laden sonst
+       automatisch initialisieren und ohne data-url mit einem Fehler
+       abbrechen, sodass window.Calendly nie gesetzt wird. */
+    window.Calendly.initInlineWidget({ url: url, parentElement: embed, resize: true });
     initialized = true;
     watchIframe(0);
   }
