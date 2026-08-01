@@ -1169,7 +1169,12 @@
       const val = params.get(key);
       if(val) pairs.push(key + '=' + encodeURIComponent(val));
     });
-    if(!pairs.length) return baseUrl;
+    /* Calendlys eigenen Cookie-Banner im iFrame unterdrücken. Er verdeckte auf
+       dem Handy das halbe Buchungsformular und war nach unserem eigenen
+       Consent-Banner der zweite Klick in Folge. Die Einwilligung für Calendlys
+       Cookies tragen damit wir — siehe Ziffer 6 der Datenschutzerklärung.
+       Wirkt nur im Embed, nicht beim direkten Aufruf der Buchungsseite. */
+    pairs.push('hide_gdpr_banner=1');
     return baseUrl + (baseUrl.indexOf('?') > -1 ? '&' : '?') + pairs.join('&');
   }
 
