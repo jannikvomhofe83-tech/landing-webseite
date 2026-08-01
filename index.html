@@ -320,10 +320,9 @@
   .field .err { display: none; font-size: 13px; color: var(--error); margin-top: 6px; }
   .field.invalid .err { display: block; }
 
-  .checkbox-field { display: flex; align-items: flex-start; gap: 10px; margin: var(--s-4) 0; }
-  .checkbox-field input { width: 20px; height: 20px; min-height: 20px; margin-top: 3px; flex-shrink: 0; accent-color: var(--luna-700); }
-  .checkbox-field label { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
-  .checkbox-field.invalid label { color: var(--error); }
+  /* Die Einwilligungs-Checkbox im Formular ist entfallen – das Formular
+     erhebt keine personenbezogenen Daten mehr. Die zugehörigen
+     .checkbox-field-Stile wurden deshalb entfernt. */
   .form-hint { font-size: 13px; color: var(--text-muted); margin-top: var(--s-3); text-align: center; }
   .btn-full { width: 100%; }
 
@@ -534,20 +533,70 @@
      S11b TERMIN BUCHEN (Calendly-Inline-Widget)
      Hinweis: Der Kalender läuft in einem iframe – sein Inneres
      ist von hier aus NICHT stylebar. Wir gestalten nur den Rahmen.
+     WICHTIG: Der Abschnitt ist beim Seitenaufruf per [hidden]
+     komplett aus dem Dokumentfluss genommen und erscheint erst
+     nach dem Absenden des Formulars.
      ========================================================= */
   .booking { background: var(--bg-soft); }
+  .booking[hidden] { display: none !important; }
   .booking > .container { max-width: 900px; }
   .booking .section-head { margin-bottom: var(--s-7); }
   .calendly-shell {
     background: #fff; border: 1px solid var(--border);
     border-radius: var(--r-xl); box-shadow: var(--shadow-md);
-    padding: 8px; overflow: hidden;
+    padding: 8px;
+    /* KEIN overflow:hidden – sonst entsteht im Zusammenspiel mit dem
+       iframe eine zweite, innere Scrollleiste (Scroll-Falle am Handy). */
+    overflow: visible;
   }
-  .booking .calendly-inline-widget {
-    min-width: 320px; width: 100%; height: 700px;
-    border-radius: var(--r-lg); overflow: hidden;
+  .calendly-stage { position: relative; }
+  .booking #calendly-embed {
+    min-width: 320px; width: 100%;
+    height: 750px; min-height: 750px;
+    border-radius: var(--r-lg);
+    overflow: visible;
   }
+  .booking #calendly-embed iframe { display: block; width: 100%; height: 100%; border: 0; }
   .booking-note { margin-top: var(--s-5); text-align: center; font-size: 14px; color: var(--text-muted); }
+
+  /* Skeleton: liegt über dem Embed, bis der Kalender wirklich da ist.
+     Das Widget braucht auf diesem Projekt spürbar lange – ohne Platzhalter
+     stünde hier ein leerer weißer Kasten. */
+  .calendly-skeleton {
+    position: absolute; inset: 0; z-index: 1;
+    background: #fff; border-radius: var(--r-lg);
+    padding: 28px 24px;
+    display: flex; flex-direction: column; gap: 18px;
+    transition: opacity .3s var(--ease);
+  }
+  .calendly-skeleton.is-done { opacity: 0; pointer-events: none; visibility: hidden; }
+  .sk-line, .sk-cell {
+    background: linear-gradient(90deg, var(--bg-tint) 25%, var(--bg-soft) 37%, var(--bg-tint) 63%);
+    background-size: 400% 100%;
+    animation: skShimmer 1.4s ease-in-out infinite;
+    border-radius: var(--r-sm);
+  }
+  .sk-line { height: 14px; }
+  .sk-line.w-40 { width: 40%; }
+  .sk-line.w-60 { width: 60%; }
+  .sk-line.w-25 { width: 25%; height: 20px; }
+  .sk-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 4px; }
+  .sk-cell { aspect-ratio: 1 / 1; }
+  .sk-note { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: auto; }
+  @keyframes skShimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+  /* Nach dem Absenden gibt es genau EINEN Handlungsaufruf: den Kalender.
+     Header- und Sticky-CTA verschwinden deshalb. */
+  body.booking-open .mobile-cta { display: none !important; }
+  body.booking-open .header-cta { display: none !important; }
+
+  .edit-answers {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 15px; font-weight: 600; color: var(--luna-500);
+    background: none; border: none; padding: 4px 0; cursor: pointer;
+    font-family: inherit;
+  }
+  .edit-answers:hover { color: var(--luna-700); text-decoration: underline; }
 
   /* =========================================================
      S12 FOOTER
@@ -645,7 +694,18 @@
     .footer-grid { grid-template-columns: 1fr 1fr; }
 
     /* Calendly stapelt ab hier Kalender + Slots untereinander -> mehr Höhe */
-    .booking .calendly-inline-widget { height: 800px; }
+    .booking #calendly-embed { height: 800px; min-height: 800px; }
+  }
+
+  /* =========================================================
+     RESPONSIVE – Kalenderhöhe unter 768px
+     Muss NACH der 1023px-Regel stehen, sonst überschreibt diese
+     bei gleicher Spezifität wieder auf 800px.
+     ========================================================= */
+  @media (max-width: 767px) {
+    .booking #calendly-embed { height: 900px; min-height: 900px; }
+    .calendly-skeleton { padding: 20px 16px; }
+    .sk-grid { gap: 7px; }
   }
 
   /* =========================================================
@@ -682,9 +742,8 @@
     .final-form-card, .hero-form-card { padding: 24px; }
     .final-benefits h2 { font-size: 28px; }
 
-    /* Handy: Kalender braucht mehr Höhe, sonst wirkt er abgeschnitten */
+    /* Handy: Kalender braucht mehr Höhe (siehe Media Query <768px) */
     .calendly-shell { padding: 4px; border-radius: var(--r-lg); }
-    .booking .calendly-inline-widget { height: 900px; }
 
     .hero h1 { font-size: 30px; }
     .hero-lead { font-size: 17px; }
@@ -973,22 +1032,9 @@
       </div>
 
       <div class="final-form-card reveal">
+        <!-- Nur noch Qualifizierungsfragen. Name, E-Mail und Telefon
+             erfasst ausschließlich Calendly im Buchungsschritt. -->
         <form class="lead-form" data-form="final" novalidate>
-          <div class="field">
-            <label for="f-name">Ihr Name</label>
-            <input type="text" id="f-name" name="name" placeholder="Max Mustermann" required autocomplete="name" />
-            <span class="err">Bitte tragen Sie hier noch etwas ein.</span>
-          </div>
-          <div class="field">
-            <label for="f-email">Ihre E-Mail-Adresse</label>
-            <input type="email" id="f-email" name="email" placeholder="max@mustermann.de" required autocomplete="email" />
-            <span class="err">Diese E-Mail-Adresse sieht nicht ganz richtig aus.</span>
-          </div>
-          <div class="field">
-            <label for="f-phone">Telefon</label>
-            <input type="tel" id="f-phone" name="phone" placeholder="Für einen schnellen Rückruf" required autocomplete="tel" />
-            <span class="err">Bitte geben Sie eine Telefonnummer an.</span>
-          </div>
           <div class="field">
             <label for="f-company">Ihr Unternehmen (optional)</label>
             <input type="text" id="f-company" name="company" placeholder="Mustermann GmbH" autocomplete="organization" />
@@ -1005,82 +1051,197 @@
             <label for="f-website-url">Link zu Ihrer aktuellen Website</label>
             <input type="url" id="f-website-url" name="website_url" placeholder="https://ihre-website.de" autocomplete="url" inputmode="url" />
           </div>
-          <div class="checkbox-field">
-            <input type="checkbox" id="f-dsgvo" name="dsgvo" required />
-            <label for="f-dsgvo">Ich bin damit einverstanden, dass meine Daten zur Bearbeitung meiner Anfrage verarbeitet werden. Weitere Informationen in der <a href="/datenschutz.html">Datenschutzerklärung</a>.</label>
-          </div>
           <button type="submit" class="btn btn-primary btn-full" data-cta="final-form">Kostenloses Erstgespräch sichern</button>
-          <p class="form-hint">Wir melden uns innerhalb von 24 Stunden. Ihre Daten geben wir nicht weiter.</p>
+          <p class="form-hint">Im nächsten Schritt wählen Sie Ihren Wunschtermin. Kostenlos und unverbindlich.</p>
         </form>
-        <div class="form-success">
+        <div class="form-success" role="status" aria-live="polite">
           <div class="ok-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <h3>Danke, <span class="success-name">wir haben Ihre Anfrage</span>.</h3>
-          <p>Wir melden uns innerhalb von 24 Stunden bei Ihnen. Falls es eilt, erreichen Sie uns direkt: <strong><a href="tel:+491723465896" style="color:inherit">0172 3465896</a></strong></p>
-          <p class="success-booking-hint">Schneller geht es direkt: <strong>Wählen Sie unten Ihren Wunschtermin.</strong></p>
+          <h3>Ihre Angaben sind gespeichert.</h3>
+          <p>Wählen Sie jetzt Ihren Wunschtermin.</p>
+          <p class="success-booking-hint">
+            <button type="button" class="edit-answers" id="edit-answers">← Angaben ändern</button>
+          </p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============================ S11b TERMIN BUCHEN (Calendly) ============================ -->
-<section class="booking" id="termin-buchen">
+<!-- ============================ S11b TERMIN BUCHEN (Calendly) ============================
+     Beim Seitenaufruf per hidden-Attribut komplett ausgeblendet (nicht im
+     Dokumentfluss). Wird ausschließlich vom Submit-Handler eingeblendet.
+     Kein .reveal auf den Kindern: die Reveal-Animation läuft einmalig beim
+     Laden und würde die Elemente sonst dauerhaft auf opacity:0 stehen lassen.
+     ============================================================================ -->
+<section class="booking" id="termin-buchen" hidden>
   <div class="container">
-    <div class="section-head reveal">
+    <div class="section-head">
       <span class="eyebrow">Termin sichern</span>
       <h2>Wählen Sie jetzt Ihren Wunschtermin</h2>
       <p class="subline">30 Minuten, kostenlos und unverbindlich. Suchen Sie sich einfach den Zeitpunkt aus, der Ihnen am besten passt.</p>
     </div>
     <div class="calendly-shell">
-      <div id="calendly-embed" class="calendly-inline-widget"></div>
+      <div class="calendly-stage">
+        <div id="calendly-embed"></div>
+        <div class="calendly-skeleton" id="calendly-skeleton" aria-hidden="true">
+          <div class="sk-line w-25"></div>
+          <div class="sk-line w-60"></div>
+          <div class="sk-grid">
+            <div class="sk-cell"></div><div class="sk-cell"></div><div class="sk-cell"></div>
+            <div class="sk-cell"></div><div class="sk-cell"></div><div class="sk-cell"></div>
+            <div class="sk-cell"></div><div class="sk-cell"></div><div class="sk-cell"></div>
+            <div class="sk-cell"></div><div class="sk-cell"></div><div class="sk-cell"></div>
+            <div class="sk-cell"></div><div class="sk-cell"></div>
+          </div>
+          <div class="sk-line w-40"></div>
+          <p class="sk-note">Kalender wird geladen …</p>
+        </div>
+      </div>
     </div>
-    <p class="booking-note reveal">Kein passender Termin dabei? Rufen Sie uns an: <a href="tel:+491723465896">0172 3465896</a><br>Die Terminvergabe läuft über Calendly (Calendly LLC, USA); dabei werden die von Ihnen im Buchungsformular angegebenen Daten an Calendly übermittelt. Näheres in unserer <a href="datenschutz.html#calendly">Datenschutzerklärung</a>.</p>
+    <p class="booking-note">Kein passender Termin dabei? Rufen Sie uns an: <a href="tel:+491723465896">0172 3465896</a><br>Die Terminvergabe läuft über Calendly (Calendly LLC, USA); dabei werden die von Ihnen im Buchungsformular angegebenen Daten sowie Ihre Antworten aus dem Formular an Calendly übermittelt. Näheres in unserer <a href="datenschutz.html#calendly">Datenschutzerklärung</a>.</p>
   </div>
 </section>
 
 <script>
 /* =========================================================
-   CALENDLY – Terminbuchung (Inline-Widget + UTM-Durchreichung)
-   Läuft absichtlich VOR widget.js, damit data-url bereits gesetzt
-   ist, wenn Calendly das Widget beim Laden automatisch initialisiert.
+   CALENDLY – Terminbuchung
+   ---------------------------------------------------------
+   - widget.js wird NICHT beim Seitenaufruf geladen (das Widget
+     braucht hier rund 10 Sekunden bis zur Anzeige und würde den
+     Seitenstart ausbremsen).
+   - Vorgewärmt wird es per IntersectionObserver, sobald der Nutzer
+     in die Nähe des Formulars kommt (rootMargin 400px).
+   - Spätestens beim Absenden wird es nachgeladen. Ein einmaliges
+     Promise stellt sicher, dass das Script nur EINMAL im Dokument
+     landet, egal wie oft die Funktion gerufen wird.
+   - Der Embed-Container bekommt bewusst KEIN data-url, solange nicht
+     abgeschickt wurde: sonst würde widget.js das Widget beim Laden
+     automatisch initialisieren und der Kalender liefe im verborgenen
+     Abschnitt bereits an.
    ========================================================= */
 (function(){
-  const CALENDLY_URL = "https://calendly.com/jannikvomhofe-flowstate-ai/30min";
-  const embed = document.getElementById('calendly-embed');
+  const CALENDLY_URL    = "https://calendly.com/jannikvomhofe-flowstate-ai/30min";
+  const CALENDLY_SCRIPT = "https://assets.calendly.com/assets/external/widget.js";
+  const UTM_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
 
-  function buildCalendlyUrl(baseUrl, name, email){
-    const params = new URLSearchParams(window.location.search);
-    const url = new URL(baseUrl);
-    if(name)  url.searchParams.set('name', name);
-    if(email) url.searchParams.set('email', email);
-    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(key){
-      if(params.has(key)) url.searchParams.set(key, params.get(key));
+  const embed    = document.getElementById('calendly-embed');
+  const section  = document.getElementById('termin-buchen');
+  const skeleton = document.getElementById('calendly-skeleton');
+
+  let scriptPromise = null;
+  let initialized   = false;
+
+  function loadCalendlyScript(){
+    if(scriptPromise) return scriptPromise;
+    scriptPromise = new Promise(function(resolve, reject){
+      if(window.Calendly && typeof window.Calendly.initInlineWidget === 'function'){ resolve(); return; }
+      const s = document.createElement('script');
+      s.src = CALENDLY_SCRIPT;
+      s.async = true;
+      s.onload  = function(){ resolve(); };
+      s.onerror = function(){ reject(new Error('Calendly widget.js konnte nicht geladen werden.')); };
+      document.head.appendChild(s);
     });
-    return url.toString();
+    return scriptPromise;
   }
 
-  function showCalendlyWithPrefill(name, email){
-    const section = document.getElementById('termin-buchen');
-    if(!embed || !section) return;
-    const url = buildCalendlyUrl(CALENDLY_URL, name, email);
-    embed.setAttribute('data-url', url);
-    if(window.Calendly && typeof window.Calendly.initInlineWidget === 'function'){
-      embed.innerHTML = '';
-      window.Calendly.initInlineWidget({ url: url, parentElement: embed });
+  /* Baut die Buchungs-URL:
+     a1  = zusammengefasste Formularantworten (Calendly-Freitextfrage 1)
+     utm_* = Kampagnenparameter aus der Seiten-URL, jeweils nur wenn vorhanden
+     Bewusst KEIN URLSearchParams für die Ausgabe: das kodiert Leerzeichen als
+     "+", was bei Calendly als Pluszeichen im Text ankommt. encodeURIComponent
+     erzeugt %20. */
+  function buildCalendlyUrl(baseUrl, a1){
+    const params = new URLSearchParams(window.location.search);
+    const pairs  = [];
+    if(a1) pairs.push('a1=' + encodeURIComponent(a1));
+    UTM_KEYS.forEach(function(key){
+      const val = params.get(key);
+      if(val) pairs.push(key + '=' + encodeURIComponent(val));
+    });
+    if(!pairs.length) return baseUrl;
+    return baseUrl + (baseUrl.indexOf('?') > -1 ? '&' : '?') + pairs.join('&');
+  }
+
+  function prefersReducedMotion(){
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function markSkeletonDone(){
+    if(skeleton) skeleton.classList.add('is-done');
+  }
+
+  /* Der iframe wird von Calendly synchron eingehängt, sein Inhalt lädt aber
+     asynchron. Skeleton bleibt daher bis zum load-Event des iframes stehen. */
+  function watchIframe(tries){
+    if(!embed) return;
+    const iframe = embed.querySelector('iframe');
+    if(iframe){
+      iframe.addEventListener('load', markSkeletonDone);
+      window.setTimeout(markSkeletonDone, 15000); /* Notbremse */
+      return;
     }
-    /* widget.js noch nicht geladen? Dann genügt data-url – Calendly
-       initialisiert das Widget beim Laden selbst mit dieser URL. */
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if((tries || 0) > 60){ markSkeletonDone(); return; }
+    window.setTimeout(function(){ watchIframe((tries || 0) + 1); }, 100);
   }
 
-  /* Start-URL ohne Prefill, aber bereits mit den UTM-Parametern der Anzeige */
-  if(embed){ embed.setAttribute('data-url', buildCalendlyUrl(CALENDLY_URL, null, null)); }
+  function initWidget(a1){
+    if(!embed || initialized) return;
+    const url = buildCalendlyUrl(CALENDLY_URL, a1);
+    embed.setAttribute('data-url', url);
+    embed.innerHTML = '';
+    window.Calendly.initInlineWidget({ url: url, parentElement: embed });
+    initialized = true;
+    watchIframe(0);
+  }
 
-  window.buildCalendlyUrl = buildCalendlyUrl;
-  window.showCalendlyWithPrefill = showCalendlyWithPrefill;
+  /* Blendet den Buchungsabschnitt ein, startet das Widget und scrollt hin. */
+  function showCalendlyBooking(a1){
+    if(!section) return;
+    section.hidden = false;
+    document.body.classList.add('booking-open');
+    if(skeleton) skeleton.classList.remove('is-done');
+
+    loadCalendlyScript().then(function(){
+      initWidget(a1);
+    })['catch'](function(){
+      if(skeleton){
+        const note = skeleton.querySelector('.sk-note');
+        if(note){
+          note.innerHTML = 'Der Kalender lässt sich gerade nicht laden. Rufen Sie uns gerne an: <a href="tel:+491723465896">0172 3465896</a>';
+        }
+      }
+    });
+
+    section.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  function hideCalendlyBooking(){
+    if(!section) return;
+    section.hidden = true;
+    document.body.classList.remove('booking-open');
+  }
+
+  /* Vorwärmen: sobald das Formular in die Nähe des Viewports kommt,
+     wird widget.js im Hintergrund geholt – der Kalender ist dann beim
+     Einblenden praktisch sofort da. */
+  (function prewarm(){
+    const form = document.getElementById('erstgespraech');
+    if(!form || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting){
+        io.disconnect();
+        loadCalendlyScript()['catch'](function(){});
+      }
+    }, { rootMargin: '400px' });
+    io.observe(form);
+  })();
+
+  window.buildCalendlyUrl     = buildCalendlyUrl;
+  window.showCalendlyBooking  = showCalendlyBooking;
+  window.hideCalendlyBooking  = hideCalendlyBooking;
 })();
 </script>
-<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
 <!-- ============================ S10 FAQ ============================ -->
 <section class="faq" id="faq">
@@ -1392,13 +1553,71 @@ function svgIcon(name){
 })();
 
 /* =========================================================
-   FORMULAR – Validierung + Inline Success + Tracking-Hooks
+   FORMULAR – Qualifizierungsfragen -> Kalender
+   ---------------------------------------------------------
+   Das Formular verschickt NICHTS an ein Backend. Es sammelt die
+   Antworten clientseitig, übergibt sie als Freitext (a1) an Calendly
+   und blendet den Kalender ein. Kontaktdaten (Name, E-Mail, Telefon)
+   erfasst ausschließlich Calendly im Buchungsschritt.
+
+   Pflichtfelder gibt es hier keine mehr – Absenden ist also auch ohne
+   jede Eingabe möglich und führt direkt zum Kalender.
    ========================================================= */
 (function(){
   const forms = document.querySelectorAll('.lead-form');
-  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  /* Reihenfolge = Reihenfolge im a1-String.
+     key      -> name-Attribut des Feldes
+     label    -> Beschriftung im Freitext, den Calendly erhält
+     text     -> bei <select> den sichtbaren Optionstext statt des value nehmen
+     skipHidden -> ausgeblendete Felder (z. B. Website-URL bei „nein") ignorieren */
+  const A1_FIELDS = [
+    { key: 'company',     label: 'Unternehmen' },
+    { key: 'website',     label: 'Website vorhanden', text: true },
+    { key: 'website_url', label: 'Aktuelle Website', skipHidden: true }
+  ];
+
+  function readAnswers(form){
+    const out = {};
+    A1_FIELDS.forEach(function(def){
+      const el = form.querySelector('[name="' + def.key + '"]');
+      if(!el) return;
+      const wrap = el.closest('.field');
+      if(def.skipHidden && wrap && wrap.hidden) return;
+      let val = (el.value || '').trim();
+      if(!val) return;
+      if(def.text && el.tagName === 'SELECT' && el.selectedIndex > -1){
+        val = (el.options[el.selectedIndex].textContent || val).trim();
+      }
+      out[def.key] = val;
+    });
+    return out;
+  }
+
+  /* "Unternehmen: X | Website vorhanden: Ja | Aktuelle Website: https://…"
+     Leere Felder fallen weg. Ohne jede Antwort: leerer String -> a1 entfällt. */
+  function buildAnswerSummary(answers){
+    return A1_FIELDS
+      .filter(function(def){ return answers[def.key]; })
+      .map(function(def){ return def.label + ': ' + answers[def.key]; })
+      .join(' | ');
+  }
+
+  function restoreAnswers(form, answers){
+    A1_FIELDS.forEach(function(def){
+      const el = form.querySelector('[name="' + def.key + '"]');
+      if(!el) return;
+      el.value = answers[def.key] || '';
+    });
+    if(typeof window.__fsSyncWebsiteUrlField === 'function'){ window.__fsSyncWebsiteUrlField(); }
+  }
 
   forms.forEach(function(form){
+    const card    = form.parentElement;
+    const success = card.querySelector('.form-success');
+    const editBtn = card.querySelector('.edit-answers');
+    let lastAnswers = {};
+
     // InitiateCheckout beim ersten Fokus
     let checkoutFired = false;
     form.addEventListener('focusin', function(){
@@ -1407,52 +1626,51 @@ function svgIcon(name){
 
     form.addEventListener('submit', function(e){
       e.preventDefault();
-      let valid = true;
 
+      /* Es gibt aktuell kein einziges Pflichtfeld. Der Check bleibt generisch
+         stehen, damit ein später wieder ergänztes required-Feld greift – ohne
+         required blockiert er nie. */
+      let valid = true;
       form.querySelectorAll('.field').forEach(function(field){
         const input = field.querySelector('input, select');
         if(!input) return;
         field.classList.remove('invalid');
         if(input.hasAttribute('required') && !input.value.trim()){ field.classList.add('invalid'); valid = false; }
-        if(input.type === 'email' && input.value && !emailRe.test(input.value)){ field.classList.add('invalid'); valid = false; }
       });
-
-      const cb = form.querySelector('input[type="checkbox"][required]');
-      if(cb){
-        const wrap = cb.closest('.checkbox-field');
-        wrap.classList.remove('invalid');
-        if(!cb.checked){ wrap.classList.add('invalid'); valid = false; }
-      }
-
       if(!valid){
         const firstErr = form.querySelector('.invalid input, .invalid select');
         if(firstErr) firstErr.focus();
         return;
       }
 
-      // Erfolg (Demo). Produktion: hier fetch() an das Backend/CRM anbinden.
-      const nameInput  = form.querySelector('input[name="name"]');
-      const emailInput = form.querySelector('input[name="email"]');
-      const fullName = ((nameInput && nameInput.value) || '').trim();
-      const email    = ((emailInput && emailInput.value) || '').trim();
-      const name = fullName.split(' ')[0];
-      const card = form.parentElement;
-      const success = card.querySelector('.form-success');
-      const nameSpan = success.querySelector('.success-name');
-      if(name){ nameSpan.textContent = name; }
-      else { nameSpan.textContent = 'wir haben Ihre Anfrage'; }
+      lastAnswers = readAnswers(form);
+      const summary = buildAnswerSummary(lastAnswers);
+
       form.style.display = 'none';
-      success.classList.add('show');
+      if(success) success.classList.add('show');
       track('Lead');
 
-      // Kalender mit Name + E-Mail vorbefüllen und dorthin scrollen.
-      // Kurze Verzögerung, damit die Danke-Meldung noch wahrgenommen wird.
-      if(typeof window.showCalendlyWithPrefill === 'function'){
-        window.setTimeout(function(){
-          window.showCalendlyWithPrefill(fullName, email);
-        }, 350);
+      if(typeof window.showCalendlyBooking === 'function'){
+        window.showCalendlyBooking(summary);
       }
     });
+
+    /* „← Angaben ändern": zurück zum Formular, Antworten wiederherstellen. */
+    if(editBtn){
+      editBtn.addEventListener('click', function(){
+        if(typeof window.hideCalendlyBooking === 'function'){ window.hideCalendlyBooking(); }
+        if(success) success.classList.remove('show');
+        form.style.display = '';
+        restoreAnswers(form, lastAnswers);
+        const target = document.getElementById('erstgespraech');
+        if(target){
+          const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+        }
+        const first = form.querySelector('input, select');
+        if(first) first.focus({ preventScroll: true });
+      });
+    }
   });
 
   function track(event){
@@ -1604,14 +1822,17 @@ const META_PIXEL_ID = '';
   });
 })();
 
-/* Website-Link-Feld einblenden, wenn eine Website vorhanden ist */
+/* Website-Link-Feld einblenden, wenn eine Website vorhanden ist.
+   sync() wird auch von „Angaben ändern" gerufen, damit das Feld beim
+   Wiederherstellen der Antworten wieder den richtigen Zustand hat. */
 (function(){
   const sel = document.getElementById('f-website');
   const urlField = document.querySelector('.field-website-url');
   if(!sel || !urlField) return;
-  sel.addEventListener('change', function(){
-    urlField.hidden = !(sel.value === 'ja');
-  });
+  function sync(){ urlField.hidden = !(sel.value === 'ja'); }
+  sel.addEventListener('change', sync);
+  window.__fsSyncWebsiteUrlField = sync;
+  sync();
 })();
 </script>
 </body>
