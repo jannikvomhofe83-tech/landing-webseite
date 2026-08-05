@@ -1816,7 +1816,7 @@ const GTM_AKTIV     = true;
   const banner = document.getElementById('consent');
   if(!banner) return;
 
-  const CATS = { statistik: !!GA4_ID || GTM_AKTIV, marketing: !!META_PIXEL_ID };
+  const CATS = { statistik: !!GA4_ID || GTM_AKTIV, marketing: !!META_PIXEL_ID || GTM_AKTIV };
   const anyCat = CATS.statistik || CATS.marketing;
 
   function read(){
