@@ -4,6 +4,35 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+<!-- Google Consent Mode v2 — muss VOR dem Tag Manager stehen.
+     Alle messenden Kategorien starten auf "denied". Erst die Einwilligung im
+     Consent-Banner schaltet sie frei (§ 25 Abs. 1 TDDDG, Art. 6 Abs. 1 lit. a DSGVO). -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){ dataLayer.push(arguments); }
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  analytics_storage: 'denied',
+  functionality_storage: 'granted',
+  security_storage: 'granted',
+  wait_for_update: 500
+});
+try {
+  var fsPrev = JSON.parse(localStorage.getItem('fs_consent') || 'null');
+  if (fsPrev) {
+    gtag('consent', 'update', {
+      ad_storage:          fsPrev.marketing ? 'granted' : 'denied',
+      ad_user_data:        fsPrev.marketing ? 'granted' : 'denied',
+      ad_personalization:  fsPrev.marketing ? 'granted' : 'denied',
+      analytics_storage:   fsPrev.statistik ? 'granted' : 'denied'
+    });
+  }
+} catch (e) {}
+</script>
+<!-- End Google Consent Mode v2 -->
+
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -1406,7 +1435,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <input type="checkbox" id="c-statistik" />
       <label for="c-statistik">
         <strong>Statistik</strong>
-        <span>Anonyme Auswertung, wie viele Besucher die Seite hat und woher sie kommen.</span>
+        <span>Auswertung mit Google Analytics über den Google Tag Manager, wie viele Besucher die Seite hat und woher sie kommen.</span>
       </label>
     </div>
     <div class="consent-opt" data-cat="marketing" hidden>
@@ -1765,23 +1794,29 @@ function svgIcon(name){
    GA4_ID        Google Analytics 4, z. B. 'G-XXXXXXXXXX'  -> Kategorie „Statistik"
    META_PIXEL_ID Meta-Pixel,        z. B. '123456789012345' -> Kategorie „Marketing"
 
-   Beide leer  -> die Seite setzt KEINE Cookies, es erscheint KEIN Banner.
+   Beide leer  -> die Seite setzt selbst KEINE Cookies.
    Sobald eine ID eingetragen ist, erscheint das Banner und der jeweilige Dienst
    wird ERST nach aktiver Zustimmung geladen.
 
    WICHTIG: Cookiefreie Analytics (Netlify Analytics, Plausible, Fathom) laufen
    serverseitig bzw. ohne Cookies und brauchen KEINE Einwilligung. Dann GA4_ID
    leer lassen – das Banner bleibt für Statistik dann zu Recht aus.
+
+   GTM_AKTIV steuert die Kategorie „Statistik" zusaetzlich. Der Google Tag
+   Manager liegt fest im <head> und laedt sofort, seine messenden Tags stehen
+   aber ueber den Consent Mode auf "denied", bis hier zugestimmt wird. Solange
+   im Container ein Analytics-Tag haengt, muss das Banner also erscheinen.
    ========================================================= */
 const GA4_ID        = '';
 const META_PIXEL_ID = '';
+const GTM_AKTIV     = true;
 
 (function(){
   const KEY = 'fs_consent';
   const banner = document.getElementById('consent');
   if(!banner) return;
 
-  const CATS = { statistik: !!GA4_ID, marketing: !!META_PIXEL_ID };
+  const CATS = { statistik: !!GA4_ID || GTM_AKTIV, marketing: !!META_PIXEL_ID };
   const anyCat = CATS.statistik || CATS.marketing;
 
   function read(){
@@ -1816,7 +1851,21 @@ const META_PIXEL_ID = '';
     window.fbq('track', 'PageView');
   }
 
+  /* Google Consent Mode: dem Tag Manager mitteilen, was erlaubt ist.
+     Der Container laeuft bereits, seine messenden Tags feuern aber erst
+     nach dieser Freigabe. */
+  function updateConsentMode(c){
+    if(typeof window.gtag !== 'function') return;
+    window.gtag('consent', 'update', {
+      ad_storage:         c.marketing ? 'granted' : 'denied',
+      ad_user_data:       c.marketing ? 'granted' : 'denied',
+      ad_personalization: c.marketing ? 'granted' : 'denied',
+      analytics_storage:  c.statistik ? 'granted' : 'denied'
+    });
+  }
+
   function apply(c){
+    updateConsentMode(c);
     if(c.statistik) loadAnalytics();
     if(c.marketing) loadPixel();
   }

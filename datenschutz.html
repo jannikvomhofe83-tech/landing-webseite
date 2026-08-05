@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
@@ -92,7 +92,7 @@
     nicht an einen Server von uns übertragen, dort nicht gespeichert und nicht ausgewertet.
   </p>
   <p>
-    Nach dem Absenden des Formulars wird der Buchungskalender eingeblendet (Ziffer 6). Ihre Antworten
+    Nach dem Absenden des Formulars wird der Buchungskalender eingeblendet (Ziffer 7). Ihre Antworten
     werden dabei zu einem einzeiligen Freitext zusammengefasst und als Vorausfüllung an das
     Buchungsformular von Calendly übergeben, damit Sie sie dort nicht erneut eingeben müssen. Zu uns
     gelangen die Angaben erst, wenn Sie die Terminbuchung in Calendly abschließen. Brechen Sie ab oder
@@ -128,7 +128,7 @@
     Sie über unseren Einwilligungs-Hinweis aktiv zugestimmt haben. Sie können dabei getrennt entscheiden:
   </p>
   <ul>
-    <li><strong>Statistik</strong> – anonyme Auswertung, wie viele Besucher die Seite hat und woher sie kommen</li>
+    <li><strong>Statistik</strong> – Auswertung mit Google Analytics über den Google Tag Manager, wie viele Besucher die Seite hat und woher sie kommen (siehe Ziffer 6)</li>
     <li><strong>Marketing</strong> – Messung, ob unsere Anzeigen bei Facebook und Instagram funktionieren (siehe Ziffer 5)</li>
   </ul>
   <p>
@@ -138,12 +138,11 @@
     umzusetzen (§ 25 Abs. 2 Nr. 2 TDDDG), und enthält keine personenbezogenen Daten.
   </p>
   <p>
-    <strong>Aktueller Stand:</strong> Derzeit ist kein einwilligungspflichtiger Dienst aktiv, und der
-    Einwilligungs-Hinweis wird deshalb nicht angezeigt. Sobald wir einen solchen Dienst aktivieren,
-    erscheint der Hinweis automatisch und diese Erklärung wird entsprechend ergänzt. Hiervon zu
-    unterscheiden ist der Buchungskalender nach Ziffer 6: Er ist Bestandteil der von Ihnen angeforderten
-    Terminvereinbarung, dient nicht der Reichweitenmessung oder Werbung und wird deshalb unabhängig von
-    einer Einwilligung bereitgestellt (§ 25 Abs. 2 Nr. 2 TDDDG).
+    <strong>Aktueller Stand:</strong> Aktiv ist die Kategorie „Statistik" über den Google Tag Manager
+    und Google Analytics 4 (Ziffer 6). Der Einwilligungs-Hinweis erscheint deshalb beim ersten Aufruf
+    der Seite. Hiervon zu unterscheiden ist der Buchungskalender nach Ziffer 7: Er ist Bestandteil der
+    von Ihnen angeforderten Terminvereinbarung, dient weder der Reichweitenmessung noch der Werbung und
+    wird deshalb unabhängig von einer Einwilligung bereitgestellt (§ 25 Abs. 2 Nr. 2 TDDDG).
   </p>
 
   <h2>5. Meta-Pixel (Facebook / Instagram)</h2>
@@ -180,16 +179,12 @@
   </div>
 
   <!-- ==========================================================================
-       VORBEREITET: Abschnitt „Reichweitenmessung / Statistik"
+       NICHT AKTIV — Alternative fuer den Fall, dass Google Analytics spaeter
+       durch eine cookiefreie Analyse (Netlify Analytics / Plausible / Fathom)
+       ersetzt wird. Dann diesen Block einkommentieren, den aktiven Abschnitt 6
+       darunter entfernen und GA4_ID sowie GTM_AKTIV in index.html leer bzw.
+       auf false setzen.
 
-       Erst einkommentieren, wenn das Tool tatsächlich aktiv ist – sonst ist die
-       Datenschutzerklärung unzutreffend. Bitte NUR die passende Variante nutzen
-       und die nachfolgenden Ziffern (6–10) entsprechend neu durchnummerieren.
-
-       ---------------------------------------------------------------------
-       VARIANTE A – cookiefreie Analyse (Netlify Analytics / Plausible / Fathom)
-       -> KEINE Einwilligung nötig, GA4_ID in index.html leer lassen!
-       ---------------------------------------------------------------------
   <h2>6. Reichweitenmessung</h2>
   <p>
     Um zu verstehen, wie viele Menschen unsere Website besuchen und über welche Wege sie zu uns
@@ -205,37 +200,39 @@
     keine Informationen auf Ihrem Endgerät gespeichert oder ausgelesen werden, ist eine Einwilligung
     nach § 25 TDDDG nicht erforderlich.
   </p>
+       ========================================================================== -->
 
-       ---------------------------------------------------------------------
-       VARIANTE B – Google Analytics 4
-       -> Einwilligung ZWINGEND, GA4_ID in index.html eintragen
-       ---------------------------------------------------------------------
-  <h2>6. Google Analytics 4</h2>
+  <h2 id="google">6. Google Tag Manager und Google Analytics 4</h2>
   <p>
-    Sofern Sie in die Kategorie „Statistik" eingewilligt haben, nutzen wir Google Analytics 4, einen
-    Webanalysedienst der <strong>Google Ireland Limited</strong>, Gordon House, Barrow Street,
-    Dublin 4, Irland. Google Analytics verwendet Cookies und ähnliche Technologien, um Ihre Nutzung
-    der Website auszuwerten – etwa welche Seiten aufgerufen werden, wie lange Sie bleiben und über
-    welche Quelle Sie zu uns gekommen sind.
+    Wir binden den <strong>Google Tag Manager</strong> sowie <strong>Google Analytics 4</strong> ein,
+    beides Dienste der <strong>Google Ireland Limited</strong>, Gordon House, Barrow Street,
+    Dublin 4, Irland. Der Google Tag Manager verwaltet ausschließlich die Einbindung unserer
+    Messwerkzeuge und erstellt selbst keine Nutzerprofile. Google Analytics wertet aus, welche Seiten
+    aufgerufen werden, wie lange Sie bleiben und über welche Quelle Sie zu uns gekommen sind.
+  </p>
+  <p>
+    Wir haben den <strong>Google Consent Mode v2</strong> eingerichtet. Solange Sie in die Kategorie
+    „Statistik" nicht eingewilligt haben, sind die Speicherzugriffe für die Analyse blockiert und es
+    werden keine Analyse-Cookies gesetzt. Erst nach Ihrer Einwilligung erfasst Google Analytics Daten.
   </p>
   <p>
     Ihre IP-Adresse wird dabei gekürzt (IP-Anonymisierung), bevor sie ausgewertet wird. Eine
     Übermittlung von Daten an die Google LLC in den USA kann dennoch nicht ausgeschlossen werden.
-    Google LLC ist nach dem EU-U.S. Data Privacy Framework zertifiziert.
+    Google LLC ist nach dem EU-U.S. Data Privacy Framework zertifiziert; ergänzend gelten die
+    EU-Standardvertragsklauseln nach Art. 46 DSGVO.
   </p>
   <p>
     <strong>Rechtsgrundlage ist ausschließlich Ihre Einwilligung</strong> nach
     <strong>Art. 6 Abs. 1 lit. a DSGVO</strong> in Verbindung mit <strong>§ 25 Abs. 1 TDDDG</strong>.
-    Ohne Ihre Zustimmung wird Google Analytics nicht geladen und es werden keine entsprechenden
-    Cookies gesetzt. Sie können Ihre Einwilligung jederzeit über den Button in Ziffer 5 widerrufen.
+    Sie können Ihre Einwilligung jederzeit über den Button in Ziffer 5 widerrufen. Die Rechtmäßigkeit
+    der bis zum Widerruf erfolgten Verarbeitung bleibt davon unberührt.
   </p>
   <p>
     Mit Google besteht ein Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO. Weitere Informationen:
     <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung von Google</a>.
   </p>
-       ========================================================================== -->
 
-  <h2 id="calendly">6. Terminbuchung über Calendly</h2>
+  <h2 id="calendly">7. Terminbuchung über Calendly</h2>
   <p>
     Für die Vereinbarung Ihres kostenlosen Erstgesprächs nutzen wir den Buchungskalender des Anbieters
     <strong>Calendly LLC</strong>, 271 17th St NW, Atlanta, GA 30363, USA („Calendly“). Der Kalender wird
@@ -308,14 +305,14 @@
     <a href="https://calendly.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung von Calendly</a>.
   </p>
 
-  <h2>7. Schriftarten</h2>
+  <h2>8. Schriftarten</h2>
   <p>
     Diese Website bindet <strong>keine externen Schriftarten</strong> ein. Es wird insbesondere kein
     Google-Fonts-CDN verwendet. Dargestellt werden ausschließlich Schriftarten, die bereits auf Ihrem
     Gerät vorhanden sind. Eine Übertragung Ihrer IP-Adresse an Dritte findet dadurch nicht statt.
   </p>
 
-  <h2>8. Ihre Rechte</h2>
+  <h2>9. Ihre Rechte</h2>
   <p>Ihnen stehen gegenüber uns folgende Rechte hinsichtlich Ihrer personenbezogenen Daten zu:</p>
   <ul>
     <li><strong>Auskunft</strong> über die von uns verarbeiteten Daten (Art. 15 DSGVO)</li>
@@ -331,7 +328,7 @@
     <a href="mailto:lukas.sehorz@flowstate-ai.net">lukas.sehorz@flowstate-ai.net</a>.
   </p>
 
-  <h2>9. Beschwerderecht bei der Aufsichtsbehörde</h2>
+  <h2>10. Beschwerderecht bei der Aufsichtsbehörde</h2>
   <p>
     Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung Ihrer
     personenbezogenen Daten zu beschweren. Für uns zuständig ist:
@@ -342,14 +339,14 @@
     <a href="https://www.lda.bayern.de" target="_blank" rel="noopener">www.lda.bayern.de</a>
   </p>
 
-  <h2>10. SSL-/TLS-Verschlüsselung</h2>
+  <h2>11. SSL-/TLS-Verschlüsselung</h2>
   <p>
     Diese Website nutzt aus Sicherheitsgründen eine SSL- bzw. TLS-Verschlüsselung. Eine verschlüsselte
     Verbindung erkennen Sie daran, dass die Adresszeile Ihres Browsers mit „https://" beginnt. Daten, die
     Sie über das Formular an uns übermitteln, können dadurch nicht von Dritten mitgelesen werden.
   </p>
 
-  <h2>11. Änderungen dieser Datenschutzerklärung</h2>
+  <h2>12. Änderungen dieser Datenschutzerklärung</h2>
   <p>
     Wir passen diese Datenschutzerklärung an, sobald sich die Datenverarbeitung auf dieser Website
     ändert – etwa wenn neue Dienste hinzukommen. Es gilt jeweils die hier veröffentlichte Fassung.
